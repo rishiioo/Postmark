@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -96,113 +96,7 @@ const messages: Message[] = threads.map((thread) => {
     starred: thread.isImportant,
   };
 });
-const sections = [
-    name: "Marcus Chen",
-    email: "marcus@figma.com",
-    subject: "Re: Design partner check-in",
-    summary:
-      "Marcus is asking to move Thursday’s call to 2:30 PM; calendar is currently clear.",
-    time: "10:18 AM",
-    category: "Action Required",
-    confidence: 96,
-    initials: "MC",
-    color: "bg-amber-100 text-amber-700",
-    unread: true,
-  },
-  {
-    id: "3",
-    name: "Priya Sharma",
-    email: "priya@notion.so",
-    subject: "Updated proposal for workspace",
-    summary:
-      "Revised proposal is ready to review, with updated pricing and the new team rollout plan.",
-    time: "9:56 AM",
-    category: "Client to Reply",
-    confidence: 94,
-    initials: "PS",
-    color: "bg-violet-100 text-violet-700",
-    unread: true,
-    starred: true,
-  },
-  {
-    id: "4",
-    name: "James Park",
-    email: "james@linear.app",
-    subject: "Re: Introduction to Sam",
-    summary:
-      "James made the introduction and is happy to coordinate a time that works for everyone.",
-    time: "9:32 AM",
-    category: "No Reply Needed",
-    confidence: 99,
-    initials: "JP",
-    color: "bg-sky-100 text-sky-700",
-  },
-  {
-    id: "5",
-    name: "Sofia Andersson",
-    email: "sofia@acme.co",
-    subject: "Next week’s leadership offsite",
-    summary:
-      "Sofia sent a draft agenda and asks for your preferred dinner option by end of day.",
-    time: "9:14 AM",
-    category: "Meetings",
-    confidence: 97,
-    initials: "SA",
-    color: "bg-emerald-100 text-emerald-700",
-    unread: true,
-  },
-  {
-    id: "6",
-    name: "Daniel Foster",
-    email: "daniel@meridian.io",
-    subject: "Invoice #1048 is ready",
-    summary: "The monthly invoice is attached; payment is due on November 24.",
-    time: "Yesterday",
-    category: "Action Required",
-    confidence: 92,
-    initials: "DF",
-    color: "bg-orange-100 text-orange-700",
-  },
-  {
-    id: "7",
-    name: "Emma Wilson",
-    email: "emma@acme.co",
-    subject: "Re: Partnership agreement",
-    summary:
-      "Emma is waiting for the signed agreement before she can share it with legal.",
-    time: "Yesterday",
-    category: "Waiting for Response",
-    confidence: 95,
-    initials: "EW",
-    color: "bg-pink-100 text-pink-700",
-    starred: true,
-  },
-  {
-    id: "8",
-    name: "Noah Williams",
-    email: "noah@stripe.com",
-    subject: "Your Stripe account review",
-    summary:
-      "A quick account review is needed to keep payouts running without interruption.",
-    time: "Tue",
-    category: "Important",
-    confidence: 99,
-    initials: "NW",
-    color: "bg-indigo-100 text-indigo-700",
-  },
-  {
-    id: "9",
-    name: "Ava Martinez",
-    email: "ava@acme.co",
-    subject: "Notes from the customer call",
-    summary:
-      "Ava shared customer feedback and the three follow-ups from Monday’s call.",
-    time: "Tue",
-    category: "Assistant to Reply",
-    confidence: 91,
-    initials: "AM",
-    color: "bg-cyan-100 text-cyan-700",
-  },
+
 const sections = [
   {
     label: "WORKSPACE",
@@ -224,6 +118,7 @@ const sections = [
     ],
   },
 ];
+
 const stats = [
   {
     label: "Total emails",
@@ -258,18 +153,19 @@ const stats = [
     mark: "bg-emerald-50",
   },
 ];
-function classificationColor(category: string) {
-  if (category === "Assistant to Reply")
+
+function classificationColor(classification: string) {
+  if (classification === "Assistant to Reply")
     return "bg-indigo-50 text-indigo-700 ring-indigo-100";
-  if (category === "Client to Reply")
+  if (classification === "Client to Reply")
     return "bg-violet-50 text-violet-700 ring-violet-100";
-  if (category === "Action Required")
+  if (classification === "Action Required")
     return "bg-amber-50 text-amber-700 ring-amber-100";
-  if (category === "Meetings")
+  if (classification === "Meetings")
     return "bg-emerald-50 text-emerald-700 ring-emerald-100";
-  if (category === "No Reply Needed")
+  if (classification === "No Reply Needed")
     return "bg-slate-100 text-slate-600 ring-slate-200";
-  if (category === "Waiting for Response")
+  if (classification === "Waiting for Response")
     return "bg-sky-50 text-sky-700 ring-sky-100";
   return "bg-rose-50 text-rose-700 ring-rose-100";
 }
@@ -286,9 +182,9 @@ export default function DashboardPage() {
     let result = messages.filter(
       (m) =>
         activeFolder === "Inbox" ||
-        m.category === activeFolder ||
+        m.classification === activeFolder ||
         (activeFolder === "Important" && m.starred) ||
-        (activeFolder === "Archived" && m.category === "No Reply Needed"),
+        (activeFolder === "Archived" && m.classification === "No Reply Needed"),
     );
     if (filter === "Unread") result = result.filter((m) => m.unread);
     if (filter === "Starred") result = result.filter((m) => m.starred);
@@ -637,9 +533,9 @@ export default function DashboardPage() {
                     </p>
                     <div className="col-start-1 row-start-2 ml-[42px] md:col-auto md:row-auto md:ml-0">
                       <span
-                        className={`inline-flex whitespace-nowrap rounded-md px-2 py-1 text-[13px] font-semibold ring-1 ring-inset ${classificationColor(message.category)}`}
+                        className={`inline-flex whitespace-nowrap rounded-md px-2 py-1 text-[13px] font-semibold ring-1 ring-inset ${classificationColor(message.classification)}`}
                       >
-                        {message.category}
+                        {message.classification}
                       </span>
                       <div className="mt-1.5 flex items-center gap-1 text-[13px] text-slate-400">
                         <span className="h-1 w-[42px] overflow-hidden rounded-full bg-slate-100">

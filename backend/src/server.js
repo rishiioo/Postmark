@@ -5,7 +5,7 @@ import connectDB from './config/db.js';
 import { config } from './env.js';
 import threadsRoute from './routes/threads.js';
 
-dotenv.config();
+dotenv.config({ path: process.env.DOTENV_PATH || '.env.local' });
 
 const app = express();
 

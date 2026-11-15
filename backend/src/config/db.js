@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import dns from 'dns';
 
-dotenv.config();
+// 🌐 Force Node to use Google/Cloudflare DNS (fixes querySrv ECONNREFUSED)
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
+dotenv.config({ path: process.env.DOTENV_PATH || '.env.local' });
 
 const connectDB = async () => {
   try {

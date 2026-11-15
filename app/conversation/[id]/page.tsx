@@ -4,15 +4,16 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, Archive, CalendarDays, Check, ChevronDown, Clock3, Mail, MoreHorizontal, Send, ShieldCheck, Sparkles, Star, UserRound } from 'lucide-react'
+import { threads, Thread } from '@/data/mockThreads'
 
 type ConversationData = {
   id: string
   subject: string
-  category: string
+  classification: string
   confidence: number
   summary: string
-  why: string
-  deadline: string
+  reason: string
+  deadlines: string[]
   participantCount: number
   thread: Array<{
     name: string
@@ -24,56 +25,91 @@ type ConversationData = {
     content: string
   }>
   suggestedDraft: string
+  segment: string
+  isImportant: boolean
+  isRead: boolean
 }
 
-const mockConversations: Record<string, ConversationData> = {
-  '1': {
-    id: '1',
-    subject: 'Q4 brand campaign — final assets',
-    category: 'Assistant to Reply',
-    confidence: 98,
-    summary: 'Olivia sent final Q4 campaign assets and is waiting for your approval before scheduling launch.',
-    why: 'The sender asks you to approve final assets before the team can schedule the campaign launch.',
-    deadline: 'Campaign launch pending your approval · Follow up by end of day',
-    participantCount: 3,
-    thread: [
-      { name: 'Olivia Rhye', email: 'olivia@acme.co', initials: 'OR', avatarColor: 'bg-rose-100 text-rose-700', time: 'Today, 9:18 AM', recipient: 'To Jordan Davis', content: 'Hi Jordan,\n\nSharing the latest campaign assets for Q4. We’ve incorporated the feedback from last week and updated the launch creative. Could you take a look and let me know if you’re happy for us to move forward?\n\nThanks,\nOlivia' },
-      { name: 'Jordan Davis', email: 'jordan@acme.co', initials: 'JD', avatarColor: 'bg-indigo-100 text-indigo-700', time: 'Today, 9:34 AM', recipient: 'To Olivia Rhye', content: 'Thanks, Olivia — I’ll take a look this morning and get back to you.' },
-      { name: 'Olivia Rhye', email: 'olivia@acme.co', initials: 'OR', avatarColor: 'bg-rose-100 text-rose-700', time: 'Today, 10:42 AM', recipient: 'To Jordan Davis', content: 'Just checking this landed in your inbox. The team is ready to schedule the launch as soon as we have your approval.' },
-    ],
-    suggestedDraft: 'Hi Olivia,\n\nThanks for the updated assets. The direction looks great — please go ahead and schedule the launch.\n\nBest,\nJordan',
-  },
-  '2': {
-    id: '2',
-    subject: 'Re: Design partner check-in',
-    category: 'Action Required',
-    confidence: 96,
-    summary: 'Marcus is asking to move Thursday’s call to 2:30 PM; calendar is currently clear.',
-    why: 'Schedule conflict resolution requires checking availability and updating the invite.',
-    deadline: 'Respond before end of day today',
-    participantCount: 2,
-    thread: [
-      { name: 'Marcus Chen', email: 'marcus@figma.com', initials: 'MC', avatarColor: 'bg-amber-100 text-amber-700', time: 'Today, 10:18 AM', recipient: 'To Jordan Davis', content: 'Hey Jordan,\n\nCan we push Thursday’s partner sync to 2:30 PM PT? Something urgent came up on my side for the morning slot.\n\nThanks,\nMarcus' },
-    ],
-    suggestedDraft: 'Hi Marcus,\n\n2:30 PM PT on Thursday works perfectly for me. I’ve updated the calendar invite.\n\nBest,\nJordan',
-  },
-  '3': {
-    id: '3',
-    subject: 'Updated proposal for workspace',
-    category: 'Client to Reply',
-    confidence: 94,
-    summary: 'Revised proposal is ready to review, with updated pricing and the new team rollout plan.',
-    why: 'Requires executive decision on team tier and annual budget allocation.',
-    deadline: 'Decision requested by Friday',
-    participantCount: 2,
-    thread: [
-      { name: 'Priya Sharma', email: 'priya@notion.so', initials: 'PS', avatarColor: 'bg-violet-100 text-violet-700', time: 'Today, 9:56 AM', recipient: 'To Jordan Davis', content: 'Hi Jordan,\n\nI’ve attached the revised proposal with the custom enterprise tiers we discussed. Let me know your thoughts on the user tiering.\n\nBest regards,\nPriya' },
-    ],
-    suggestedDraft: 'Hi Priya,\n\nThanks for sending over the revised numbers. I’ll review the user tier breakdown with the team and get back to you by tomorrow.\n\nBest,\nJordan',
-  },
-}
+const labels = ['Assistant to Reply', 'Client to Reply', 'Action Required', 'Meetings', 'No Reply Needed', 'Waiting for Response', 'Important']
 
-const labels = ['Assistant to Reply', 'Client to Reply', 'Action Required', 'Meetings', 'No Reply Needed', 'Waiting for Response']
+function getThreadData(id: string): ConversationData | null {
+  const t = threads.find((thread) => thread.id === id)
+  if (!t) return null
+
+  const participants = t.participants
+  const otherParticipant = participants.find(
+    (p) => p.email !== "jordan@postmark.in" && p.email !== "jordan@personal.in"
+  )
+  const otherName = otherParticipant?.name || "Unknown"
+  const otherEmail = otherParticipant?.email || ""
+  const initials = otherName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
+
+  // Generate avatar color based on classification
+  const colorMap: Record<string, string> = {
+    "Assistant to Reply": "bg-rose-100 text-rose-700",
+    "Action Required": "bg-amber-100 text-amber-700",
+    "Client to Reply": "bg-violet-100 text-violet-700",
+    "No Reply Needed": "bg-sky-100 text-sky-700",
+    Meetings: "bg-emerald-100 text-emerald-700",
+    "Waiting for Response": "bg-pink-100 text-pink-700",
+    Important: "bg-indigo-100 text-indigo-700",
+  }
+
+  const threadMessages = t.messages.map((msg, index) => {
+    const isFromOther = msg.from === otherEmail
+    const sender = isFromOther ? otherParticipant : { name: "Jordan Davis", email: "jordan@postmark.in" }
+    const recipient = isFromOther ? "To Jordan Davis" : `To ${otherName}`
+    const time = new Date(msg.sentAt).toLocaleString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      month: "short",
+      day: "numeric",
+    })
+
+    return {
+      name: sender?.name || "Unknown",
+      email: sender?.email || "",
+      initials: isFromOther ? initials : "JD",
+      avatarColor: isFromOther ? colorMap[t.classification] || "bg-indigo-100 text-indigo-700" : "bg-indigo-100 text-indigo-700",
+      time,
+      recipient,
+      content: msg.body,
+    }
+  })
+
+  // Generate a suggested draft based on classification
+  const draftMap: Record<string, string> = {
+    "Assistant to Reply": `Hi ${otherName},\n\nThanks for the update. I'll review and get back to you shortly.\n\nBest,\nJordan`,
+    "Action Required": `Hi ${otherName},\n\nI'll take care of this and follow up soon.\n\nBest,\nJordan`,
+    "Client to Reply": `Hi ${otherName},\n\nThanks for sending this over. I'll review with the team and get back to you.\n\nBest,\nJordan`,
+    "No Reply Needed": `Hi ${otherName},\n\nThanks for the information. No action needed on my end.\n\nBest,\nJordan`,
+    "Meetings": `Hi ${otherName},\n\nWorks for me. I'll update the calendar invite.\n\nBest,\nJordan`,
+    "Waiting for Response": `Hi ${otherName},\n\nJust following up on this. Let me know if you need anything from my side.\n\nBest,\nJordan`,
+    "Important": `Hi ${otherName},\n\nThanks for flagging this. I'll address it promptly.\n\nBest,\nJordan`,
+  }
+
+  return {
+    id: t.id,
+    subject: t.subject,
+    classification: t.classification,
+    confidence: t.confidence,
+    summary: t.summary,
+    reason: t.reason,
+    deadlines: t.deadlines,
+    participantCount: t.participants.length,
+    thread: threadMessages,
+    suggestedDraft: draftMap[t.classification] || draftMap["Assistant to Reply"],
+    segment: t.segment,
+    isImportant: t.isImportant,
+    isRead: t.isRead,
+  }
+}
 
 export default function ConversationDynamicPage() {
   const params = useParams()
@@ -81,16 +117,17 @@ export default function ConversationDynamicPage() {
   const id = Array.isArray(rawId) ? rawId[0] : (rawId ?? '1')
 
   const conversation = useMemo(() => {
-    if (mockConversations[id]) return mockConversations[id]
+    const data = getThreadData(id)
+    if (data) return data
     // Default fallback dynamically using the id
     return {
       id,
       subject: `Conversation #${id}`,
-      category: 'Assistant to Reply',
+      classification: 'Assistant to Reply',
       confidence: 95,
       summary: `Conversation details and AI-classified message thread for #${id}.`,
-      why: 'This thread requires follow-up according to your workspace rules.',
-      deadline: 'Follow up needed soon',
+      reason: 'This thread requires follow-up according to your workspace rules.',
+      deadlines: ['Follow up needed soon'],
       participantCount: 2,
       thread: [
         {
@@ -104,10 +141,13 @@ export default function ConversationDynamicPage() {
         },
       ],
       suggestedDraft: 'Hi,\n\nThanks for following up. Everything looks good on my end.\n\nBest,\nJordan',
+      segment: 'workspace',
+      isImportant: false,
+      isRead: false,
     }
   }, [id])
 
-  const [classification, setClassification] = useState(conversation.category)
+  const [classification, setClassification] = useState(conversation.classification)
   const [insightsOpen, setInsightsOpen] = useState(false)
   const [draft, setDraft] = useState(conversation.suggestedDraft)
   const [sent, setSent] = useState(false)
@@ -207,7 +247,7 @@ export default function ConversationDynamicPage() {
                       onClick={() => setSent(true)}
                       className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 text-[13px] font-semibold text-white hover:bg-indigo-700"
                     >
-                      <Send className="size-3" />Approve &amp; Send
+                      <Send className="size-3" />Approve & Send
                     </button>
                   </div>
                 </>
@@ -252,18 +292,31 @@ export default function ConversationDynamicPage() {
                 </div>
                 <div className="mt-4 rounded-lg bg-slate-50 p-3">
                   <p className="text-[13px] font-semibold text-slate-700">Why this classification?</p>
-                  <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{conversation.why}</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{conversation.reason}</p>
                 </div>
                 <div className="mt-4 border-t border-slate-100 pt-3">
-                  <p className="text-[13px] font-semibold uppercase tracking-[.12em] text-slate-400">Dates &amp; deadlines</p>
-                  <p className="mt-2 flex items-start gap-2 text-[13px] text-slate-600">
-                    <CalendarDays className="size-3.5 shrink-0 text-indigo-500" />
-                    {conversation.deadline}
-                  </p>
+                  <p className="text-[13px] font-semibold uppercase tracking-[.12em] text-slate-400">Dates & deadlines</p>
+                  {conversation.deadlines.length > 0 ? (
+                    conversation.deadlines.map((deadline, i) => (
+                      <p key={i} className="mt-2 flex items-start gap-2 text-[13px] text-slate-600">
+                        <CalendarDays className="size-3.5 shrink-0 text-indigo-500" />
+                        {deadline}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="mt-2 flex items-center gap-2 text-[13px] text-slate-500">
+                      <Clock3 className="size-3.5 text-slate-400" />
+                      No specific deadlines
+                    </p>
+                  )}
                   <p className="mt-2 flex items-center gap-2 text-[13px] text-slate-500">
                     <Clock3 className="size-3.5 text-slate-400" />
                     Follow up by end of day
                   </p>
+                </div>
+                <div className="mt-4 border-t border-slate-100 pt-3">
+                  <p className="text-[13px] font-semibold uppercase tracking-[.12em] text-slate-400">Segment</p>
+                  <p className="mt-1 text-xs text-slate-600 capitalize">{conversation.segment}</p>
                 </div>
               </section>
               <section className="rounded-xl border border-slate-200/80 bg-white p-4">
