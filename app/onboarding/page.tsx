@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Circle, LoaderCircle, Mail, ShieldCheck, Sparkles } from 'lucide-react'
 
 type Step = 1 | 2 | 3
@@ -19,9 +20,123 @@ export default function OnboardingPage() {
     window.setTimeout(() => setFailed(true), 2200)
   }
 
-  return <main className="flex min-h-screen flex-col bg-[#f8f9fb] px-4 pb-8 pt-5 text-slate-900 antialiased sm:px-8 sm:pt-7"><header className="mx-auto flex w-full max-w-[900px] items-center justify-between"><a href="/" className="flex items-center gap-2 text-[14px] font-semibold tracking-[-.04em]"><span className="grid size-8 place-items-center rounded-[10px] bg-indigo-600 text-white"><Mail className="size-4" /></span>postmark<span className="-ml-2 text-indigo-600">.</span></a>{step > 1 && <button onClick={() => setStep((step - 1) as Step)} className="inline-flex items-center gap-1.5 text-[9px] font-medium text-slate-500 hover:text-slate-800"><ArrowLeft className="size-3.5" />Back</button>}</header><div className="mx-auto mt-8 w-full max-w-[440px] sm:mt-12"><div className="mb-8 flex items-center justify-center gap-2" aria-label={`Step ${step} of 3`}>{[1, 2, 3].map((number) => <div key={number} className="flex items-center gap-2"><span className={`grid size-7 place-items-center rounded-full text-[9px] font-semibold ${step === number ? 'bg-indigo-600 text-white' : step > number ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{step > number ? <Check className="size-3.5" /> : number}</span>{number < 3 && <span className={`h-px w-8 ${step > number ? 'bg-emerald-300' : 'bg-slate-200'}`} />}</div>)}</div>
-      {step === 1 && <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8"><div className="mb-6 grid size-12 place-items-center rounded-2xl bg-indigo-50 text-indigo-600"><Sparkles className="size-5" /></div><p className="text-[9px] font-semibold uppercase tracking-[.14em] text-indigo-600">A calmer inbox starts here</p><h1 className="mt-2 text-[25px] font-semibold leading-tight tracking-[-.055em] sm:text-[30px]">Never miss an email that needs you.</h1><p className="mt-3 text-[11px] leading-relaxed text-slate-500">Postmark sorts the noise, surfaces what matters, and helps your team stay on top of every conversation.</p><div className="mt-7 space-y-2"><button onClick={() => setStep(2)} className="flex h-11 w-full items-center justify-center rounded-lg bg-indigo-600 text-[10px] font-semibold text-white hover:bg-indigo-700">Sign up</button><button onClick={() => setStep(2)} className="flex h-11 w-full items-center justify-center rounded-lg border border-slate-200 text-[10px] font-semibold text-slate-700 hover:bg-slate-50">Log in</button></div><div className="my-5 flex items-center gap-3 text-[9px] text-slate-400"><span className="h-px flex-1 bg-slate-100" />OR TRY A DEMO<span className="h-px flex-1 bg-slate-100" /></div><div className="grid grid-cols-1 gap-2 sm:grid-cols-2"><a href="/" className="flex h-10 items-center justify-center rounded-lg bg-slate-50 text-[9px] font-semibold text-slate-600 hover:bg-slate-100">Continue as demo assistant</a><a href="/client" className="flex h-10 items-center justify-center rounded-lg bg-slate-50 text-[9px] font-semibold text-slate-600 hover:bg-slate-100">Continue as demo client</a></div></section>}
-      {step === 2 && <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8"><p className="text-[9px] font-semibold uppercase tracking-[.14em] text-indigo-600">Step 2 of 3</p><h1 className="mt-2 text-[23px] font-semibold tracking-[-.05em]">Connect your email</h1><p className="mt-2 text-[10px] leading-relaxed text-slate-500">Choose the inbox you use for work. You can add more accounts later.</p><div className="mt-6 space-y-2"><button onClick={() => { setProvider('Gmail'); setConsent(true) }} className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition ${provider === 'Gmail' && consent ? 'border-indigo-300 bg-indigo-50/50' : 'border-slate-200 hover:border-slate-300'}`}><span className="grid size-9 place-items-center rounded-lg bg-rose-50 font-bold text-rose-600">M</span><span className="flex-1"><span className="block text-[10px] font-semibold text-slate-800">Gmail</span><span className="mt-0.5 block text-[9px] text-slate-400">Connect your Google inbox</span></span><ChevronRight className="size-4 text-slate-400" /></button><button onClick={() => { setProvider('Outlook'); setConsent(true) }} className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition ${provider === 'Outlook' && consent ? 'border-indigo-300 bg-indigo-50/50' : 'border-slate-200 hover:border-slate-300'}`}><span className="grid size-9 place-items-center rounded-lg bg-sky-50 font-bold text-sky-600">O</span><span className="flex-1"><span className="block text-[10px] font-semibold text-slate-800">Outlook</span><span className="mt-0.5 block text-[9px] text-slate-400">Connect your Microsoft inbox</span></span><ChevronRight className="size-4 text-slate-400" /></button></div><div className="mt-5 flex items-start gap-2 rounded-lg bg-slate-50 p-3"><ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-emerald-600" /><p className="text-[9px] leading-relaxed text-slate-500">Your credentials are never stored here. You control what Postmark can access.</p></div>{consent && <div role="dialog" aria-modal="true" aria-label={`${provider} permissions`} className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/40 p-4"><h2 className="text-[10px] font-semibold text-slate-800">Allow Postmark to connect to {provider}?</h2><p className="mt-1 text-[9px] text-slate-500">This demo consent previews the permissions requested.</p><ul className="mt-3 space-y-2 text-[9px] text-slate-600"><li className="flex items-center gap-2"><CheckCircle2 className="size-3.5 text-emerald-600" />Read and organize your email</li><li className="flex items-center gap-2"><CheckCircle2 className="size-3.5 text-emerald-600" />Send replies only after your approval</li><li className="flex items-center gap-2"><Circle className="size-3.5 text-slate-400" />We will never send without permission</li></ul><div className="mt-4 flex gap-2"><button onClick={() => setConsent(false)} className="h-9 flex-1 rounded-lg border border-slate-200 bg-white text-[9px] font-semibold text-slate-600">Cancel</button><button onClick={startSync} className="h-9 flex-1 rounded-lg bg-indigo-600 text-[9px] font-semibold text-white">Allow access</button></div></div>}</section>}
-      {step === 3 && <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8"><p className="text-[9px] font-semibold uppercase tracking-[.14em] text-indigo-600">Step 3 of 3</p><div className="mt-2 flex items-center gap-2"><h1 className="text-[23px] font-semibold tracking-[-.05em]">{done ? 'You’re all set' : failed ? 'Sync needs attention' : 'Getting your inbox ready'}</h1>{!failed && !done && <LoaderCircle className="size-4 animate-spin text-indigo-600" />}</div><p className="mt-2 text-[10px] leading-relaxed text-slate-500">{failed ? `We couldn’t finish connecting to ${provider}. Check your connection and try again.` : done ? 'Your inbox is connected and ready for a fresh start.' : `Connecting ${provider} and organizing your messages.`}</p><div className="mt-6 h-2 overflow-hidden rounded-full bg-slate-100"><div className={`h-full rounded-full transition-all duration-700 ${failed ? 'w-[55%] bg-rose-500' : done ? 'w-full bg-emerald-500' : 'w-[65%] animate-pulse bg-indigo-600'}`} /></div><ul className="mt-6 space-y-4">{['Fetching emails', 'AI is classifying conversations', 'Done'].map((label, index) => { const complete = done || (failed ? index === 0 : index === 0); const current = !failed && !done && index === 1; return <li key={label} className="flex items-center gap-3 text-[10px]"><span className={`grid size-5 place-items-center rounded-full ${complete ? 'bg-emerald-50 text-emerald-600' : current ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>{complete ? <Check className="size-3" /> : current ? <LoaderCircle className="size-3 animate-spin" /> : <span className="size-1 rounded-full bg-current" />}</span><span className={complete || current ? 'font-medium text-slate-700' : 'text-slate-400'}>{label}</span>{failed && index === 1 && <span className="ml-auto text-[9px] font-medium text-rose-600">Connection failed</span>}</li> })}</ul><div className="mt-7">{failed ? <button onClick={() => { setFailed(false); setDone(false); startSync() }} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 text-[10px] font-semibold text-white hover:bg-indigo-700">Retry connection <ArrowRight className="size-3.5" /></button> : done ? <a href="/" className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 text-[10px] font-semibold text-white hover:bg-indigo-700">Open inbox <ArrowRight className="size-3.5" /></a> : <button onClick={() => { setFailed(true); setDone(true) }} className="flex h-10 w-full items-center justify-center rounded-lg border border-slate-200 text-[9px] font-semibold text-slate-500 hover:bg-slate-50">Demo: finish sync</button>}</div></section>}
-      <p className="mt-5 text-center text-[9px] text-slate-400">By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and <a href="#" className="underline underline-offset-2">Privacy Policy</a>.</p></div></main>
+  return (
+    <main className="flex min-h-screen flex-col bg-[#f8f9fb] px-4 pb-8 pt-5 text-slate-900 antialiased sm:px-8 sm:pt-7">
+      <header className="mx-auto flex w-full max-w-[900px] items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2 text-[14px] font-semibold tracking-[-.04em]">
+          <span className="grid size-8 place-items-center rounded-[10px] bg-indigo-600 text-white"><Mail className="size-4" /></span>
+          postmark<span className="-ml-2 text-indigo-600">.</span>
+        </Link>
+        {step > 1 && <button onClick={() => setStep((step - 1) as Step)} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-800"><ArrowLeft className="size-3.5" />Back</button>}
+      </header>
+      <div className="mx-auto mt-8 w-full max-w-[440px] sm:mt-12">
+        <div className="mb-8 flex items-center justify-center gap-2" aria-label={`Step ${step} of 3`}>
+          {[1, 2, 3].map((number) => (
+            <div key={number} className="flex items-center gap-2">
+              <span className={`grid size-7 place-items-center rounded-full text-[13px] font-semibold ${step === number ? 'bg-indigo-600 text-white' : step > number ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>
+                {step > number ? <Check className="size-3.5" /> : number}
+              </span>
+              {number < 3 && <span className={`h-px w-8 ${step > number ? 'bg-emerald-300' : 'bg-slate-200'}`} />}
+            </div>
+          ))}
+        </div>
+
+        {step === 1 && (
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8">
+            <div className="mb-6 grid size-12 place-items-center rounded-2xl bg-indigo-50 text-indigo-600"><Sparkles className="size-5" /></div>
+            <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-indigo-600">A calmer inbox starts here</p>
+            <h1 className="mt-2 text-[25px] font-semibold leading-tight tracking-[-.055em] sm:text-[30px]">Never miss an email that needs you.</h1>
+            <p className="mt-3 text-[13px] leading-relaxed text-slate-500">Postmark sorts the noise, surfaces what matters, and helps your team stay on top of every conversation.</p>
+            <div className="mt-7 space-y-2">
+              <button onClick={() => setStep(2)} className="flex h-11 w-full items-center justify-center rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700">Sign up</button>
+              <button onClick={() => setStep(2)} className="flex h-11 w-full items-center justify-center rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">Log in</button>
+            </div>
+            <div className="my-5 flex items-center gap-3 text-[13px] text-slate-400"><span className="h-px flex-1 bg-slate-100" />OR TRY A DEMO<span className="h-px flex-1 bg-slate-100" /></div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Link href="/dashboard" className="flex h-10 items-center justify-center rounded-lg bg-slate-50 text-[13px] font-semibold text-slate-600 hover:bg-slate-100">Continue as demo assistant</Link>
+              <Link href="/client" className="flex h-10 items-center justify-center rounded-lg bg-slate-50 text-[13px] font-semibold text-slate-600 hover:bg-slate-100">Continue as demo client</Link>
+            </div>
+          </section>
+        )}
+
+        {step === 2 && (
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8">
+            <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-indigo-600">Step 2 of 3</p>
+            <h1 className="mt-2 text-[23px] font-semibold tracking-[-.05em]">Connect your email</h1>
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">Choose the inbox you use for work. You can add more accounts later.</p>
+            <div className="mt-6 space-y-2">
+              <button onClick={() => { setProvider('Gmail'); setConsent(true) }} className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition ${provider === 'Gmail' && consent ? 'border-indigo-300 bg-indigo-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
+                <span className="grid size-9 place-items-center rounded-lg bg-rose-50 font-bold text-rose-600">M</span>
+                <span className="flex-1"><span className="block text-xs font-semibold text-slate-800">Gmail</span><span className="mt-0.5 block text-[13px] text-slate-400">Connect your Google inbox</span></span>
+                <ChevronRight className="size-4 text-slate-400" />
+              </button>
+              <button onClick={() => { setProvider('Outlook'); setConsent(true) }} className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition ${provider === 'Outlook' && consent ? 'border-indigo-300 bg-indigo-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
+                <span className="grid size-9 place-items-center rounded-lg bg-sky-50 font-bold text-sky-600">O</span>
+                <span className="flex-1"><span className="block text-xs font-semibold text-slate-800">Outlook</span><span className="mt-0.5 block text-[13px] text-slate-400">Connect your Microsoft inbox</span></span>
+                <ChevronRight className="size-4 text-slate-400" />
+              </button>
+            </div>
+            <div className="mt-5 flex items-start gap-2 rounded-lg bg-slate-50 p-3">
+              <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+              <p className="text-[13px] leading-relaxed text-slate-500">Your credentials are never stored here. You control what Postmark can access.</p>
+            </div>
+            {consent && (
+              <div role="dialog" aria-modal="true" aria-label={`${provider} permissions`} className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/40 p-4">
+                <h2 className="text-xs font-semibold text-slate-800">Allow Postmark to connect to {provider}?</h2>
+                <p className="mt-1 text-[13px] text-slate-500">This demo consent previews the permissions requested.</p>
+                <ul className="mt-3 space-y-2 text-[13px] text-slate-600">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="size-3.5 text-emerald-600" />Read and organize your email</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="size-3.5 text-emerald-600" />Send replies only after your approval</li>
+                  <li className="flex items-center gap-2"><Circle className="size-3.5 text-slate-400" />We will never send without permission</li>
+                </ul>
+                <div className="mt-4 flex gap-2">
+                  <button onClick={() => setConsent(false)} className="h-9 flex-1 rounded-lg border border-slate-200 bg-white text-[13px] font-semibold text-slate-600">Cancel</button>
+                  <button onClick={startSync} className="h-9 flex-1 rounded-lg bg-indigo-600 text-[13px] font-semibold text-white">Allow access</button>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {step === 3 && (
+          <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(15,23,42,.035)] sm:p-8">
+            <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-indigo-600">Step 3 of 3</p>
+            <div className="mt-2 flex items-center gap-2">
+              <h1 className="text-[23px] font-semibold tracking-[-.05em]">{done ? 'You’re all set' : failed ? 'Sync needs attention' : 'Getting your inbox ready'}</h1>
+              {!failed && !done && <LoaderCircle className="size-4 animate-spin text-indigo-600" />}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">{failed ? `We couldn’t finish connecting to ${provider}. Check your connection and try again.` : done ? 'Your inbox is connected and ready for a fresh start.' : `Connecting ${provider} and organizing your messages.`}</p>
+            <div className="mt-6 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className={`h-full rounded-full transition-all duration-700 ${failed ? 'w-[55%] bg-rose-500' : done ? 'w-full bg-emerald-500' : 'w-[65%] animate-pulse bg-indigo-600'}`} />
+            </div>
+            <ul className="mt-6 space-y-4">
+              {['Fetching emails', 'AI is classifying conversations', 'Done'].map((label, index) => {
+                const complete = done || (failed ? index === 0 : index === 0);
+                const current = !failed && !done && index === 1;
+                return (
+                  <li key={label} className="flex items-center gap-3 text-xs">
+                    <span className={`grid size-5 place-items-center rounded-full ${complete ? 'bg-emerald-50 text-emerald-600' : current ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
+                      {complete ? <Check className="size-3" /> : current ? <LoaderCircle className="size-3 animate-spin" /> : <span className="size-1 rounded-full bg-current" />}
+                    </span>
+                    <span className={complete || current ? 'font-medium text-slate-700' : 'text-slate-400'}>{label}</span>
+                    {failed && index === 1 && <span className="ml-auto text-[13px] font-medium text-rose-600">Connection failed</span>}
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="mt-7">
+              {failed ? (
+                <button onClick={() => { setFailed(false); setDone(false); startSync() }} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700">Retry connection <ArrowRight className="size-3.5" /></button>
+              ) : done ? (
+                <Link href="/dashboard" className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-700">Open inbox <ArrowRight className="size-3.5" /></Link>
+              ) : (
+                <button onClick={() => { setFailed(true); setDone(true) }} className="flex h-10 w-full items-center justify-center rounded-lg border border-slate-200 text-[13px] font-semibold text-slate-500 hover:bg-slate-50">Demo: finish sync</button>
+              )}
+            </div>
+          </section>
+        )}
+        <p className="mt-5 text-center text-[13px] text-slate-400">By continuing, you agree to our <a href="#" className="underline underline-offset-2">Terms</a> and <a href="#" className="underline underline-offset-2">Privacy Policy</a>.</p>
+      </div>
+    </main>
+  )
 }
