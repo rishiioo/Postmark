@@ -212,12 +212,6 @@
 .dark .shadow-slate-950\/20 {
   box-shadow: 0 1px 2px rgba(0 0 0 / 0.4) !important;
 }
-.dark .shadow-\[0_2px_8px_rgba\(15,23,42,\.025\)\],
-.dark .shadow-\[0_4px_16px_rgba\(15,23,42,\.035\)\],
-.dark .shadow-\[0_1px_2px_rgba\(15,23,42,\.02\)\],
-.dark .shadow-\[0_1px_2px_rgba\(15,23,42,\.03\)\] {
-  box-shadow: 0 2px 8px rgba(0 0 0 / 0.35) !important;
-}
 .dark .bg-indigo-600 {
   background-color: var(--sidebar-primary) !important;
 }
