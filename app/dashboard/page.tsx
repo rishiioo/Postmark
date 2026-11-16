@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { InboxChatPanel } from "@/components/inbox-chat-panel";
 import {
@@ -29,7 +29,9 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { threads } from "@/data/mockThreads";
+import { apiConfigured, useThreads } from "@/lib/store";
+import { overdueDays, timeAgo } from "@/lib/radar";
+import type { Thread } from "@/lib/types";
 
 type Message = {
   id: string;
@@ -46,9 +48,15 @@ type Message = {
   unread?: boolean;
   starred?: boolean;
   avatar?: string;
+  archived?: boolean;
+  needsReview?: boolean;
+  handledBy?: string | null;
+  handledAt?: string;
+  overdue?: number | null;
+  lastAt?: number;
 };
 
-const messages: Message[] = threads.map((thread) => {
+function toMessage(thread: Thread): Message {
   const lastMsg = thread.messages[thread.messages.length - 1];
   const time = new Date(lastMsg.sentAt).toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -94,18 +102,23 @@ const messages: Message[] = threads.map((thread) => {
     color: colorMap[thread.classification] || "bg-slate-100 text-slate-700",
     unread: !thread.isRead,
     starred: thread.isImportant,
+    archived: thread.isArchived,
+    needsReview: thread.needsReview,
+    handledBy: thread.handledBy,
+    handledAt: thread.handledAt,
+    overdue: overdueDays(thread),
+    lastAt: new Date(lastMsg.sentAt).getTime(),
   };
-});
-
+}
 const sections = [
   {
     label: "WORKSPACE",
     items: [
-      { name: "Inbox", icon: Inbox, count: "12" },
-      { name: "Assistant to Reply", icon: Send, count: "4" },
-      { name: "Client to Reply", icon: Mail, count: "3" },
+      { name: "Inbox", icon: Inbox },
+      { name: "Assistant to Reply", icon: Send },
+      { name: "Client to Reply", icon: Mail },
       { name: "No Reply Needed", icon: Check },
-      { name: "Action Required", icon: ListFilter, count: "2" },
+      { name: "Action Required", icon: ListFilter },
       { name: "Waiting for Response", icon: Clock3 },
       { name: "Meetings", icon: CalendarDays },
     ],
@@ -118,54 +131,32 @@ const sections = [
     ],
   },
 ];
-
-const stats = [
-  {
-    label: "Total emails",
-    value: "128",
-    change: "+12 today",
-    icon: Inbox,
-    tone: "text-slate-500",
-    mark: "bg-slate-100",
-  },
-  {
-    label: "Unread",
-    value: "12",
-    change: "4 since morning",
-    icon: Mail,
-    tone: "text-indigo-600",
-    mark: "bg-indigo-50",
-  },
-  {
-    label: "Needs action",
-    value: "6",
-    change: "2 high priority",
-    icon: ListFilter,
-    tone: "text-amber-600",
-    mark: "bg-amber-50",
-  },
-  {
-    label: "Client attention",
-    value: "3",
-    change: "All on track",
-    icon: Bell,
-    tone: "text-emerald-600",
-    mark: "bg-emerald-50",
-  },
-];
-
-function classificationColor(classification: string) {
-  if (classification === "Assistant to Reply")
+function buildStats(messages: Message[]) {
+  const live = messages.filter((m) => !m.archived);
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const unread = live.filter((m) => m.unread).length;
+  const action = live.filter((m) => !m.handledBy && ["Assistant to Reply", "Action Required"].includes(m.classification)).length;
+  const client = live.filter((m) => !m.handledBy && m.classification === "Client to Reply").length;
+  const review = live.filter((m) => m.needsReview).length;
+  return [
+    { label: "Total emails", value: String(live.length), change: `${live.filter((m) => (m.lastAt ?? 0) > dayAgo).length} in the last 24h`, icon: Inbox, tone: "text-slate-500", mark: "bg-slate-100" },
+    { label: "Unread", value: String(unread), change: unread ? "Waiting to be opened" : "Inbox is read", icon: Mail, tone: "text-indigo-600", mark: "bg-indigo-50" },
+    { label: "Needs action", value: String(action), change: review ? `${review} flagged for review` : "AI is confident", icon: ListFilter, tone: "text-amber-600", mark: "bg-amber-50" },
+    { label: "Client attention", value: String(client), change: client ? (live.some((m) => m.overdue) ? `${live.filter((m) => m.overdue).length} overdue — nudge them` : "Waiting on the client") : "All handled", icon: Bell, tone: "text-emerald-600", mark: "bg-emerald-50" },
+  ];
+}
+function classificationColor(category: string) {
+  if (category === "Assistant to Reply")
     return "bg-indigo-50 text-indigo-700 ring-indigo-100";
-  if (classification === "Client to Reply")
+  if (category === "Client to Reply")
     return "bg-violet-50 text-violet-700 ring-violet-100";
-  if (classification === "Action Required")
+  if (category === "Action Required")
     return "bg-amber-50 text-amber-700 ring-amber-100";
-  if (classification === "Meetings")
+  if (category === "Meetings")
     return "bg-emerald-50 text-emerald-700 ring-emerald-100";
-  if (classification === "No Reply Needed")
+  if (category === "No Reply Needed")
     return "bg-slate-100 text-slate-600 ring-slate-200";
-  if (classification === "Waiting for Response")
+  if (category === "Waiting for Response")
     return "bg-sky-50 text-sky-700 ring-sky-100";
   return "bg-rose-50 text-rose-700 ring-rose-100";
 }
@@ -178,16 +169,43 @@ export default function DashboardPage() {
   const [mobileNav, setMobileNav] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [sortRecent, setSortRecent] = useState(true);
+  const [toast, setToast] = useState("");
+  const { threads, error, mode, loading, refresh, simulateEmail } = useThreads();
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const messages = useMemo(
+    () => threads.map(toMessage).sort((a, b) => (b.lastAt ?? 0) - (a.lastAt ?? 0)),
+    [threads],
+  );
+  const stats = useMemo(() => buildStats(messages), [messages]);
+  const counts = useMemo(() => {
+    const live = messages.filter((m) => !m.archived);
+    const c: Record<string, number> = { Inbox: live.length, Important: live.filter((m) => m.starred).length, Archived: messages.length - live.length };
+    live.forEach((m) => { c[m.classification] = (c[m.classification] ?? 0) + 1; });
+    return c;
+  }, [messages]);
   const shownMessages = useMemo(() => {
-    let result = messages.filter(
-      (m) =>
+    let result = messages.filter((m) => {
+      if (activeFolder === "Archived") return m.archived;
+      if (m.archived) return false;
+      return (
         activeFolder === "Inbox" ||
         m.classification === activeFolder ||
-        (activeFolder === "Important" && m.starred) ||
-        (activeFolder === "Archived" && m.classification === "No Reply Needed"),
-    );
+        (activeFolder === "Important" && m.starred)
+      );
+    });
     if (filter === "Unread") result = result.filter((m) => m.unread);
     if (filter === "Starred") result = result.filter((m) => m.starred);
+    if (filter === "Needs review") result = result.filter((m) => m.needsReview);
     if (query.trim())
       result = result.filter((m) =>
         `${m.name} ${m.email} ${m.subject} ${m.summary}`
@@ -195,7 +213,15 @@ export default function DashboardPage() {
           .includes(query.toLowerCase()),
       );
     return sortRecent ? result : [...result].reverse();
-  }, [activeFolder, filter, query, sortRecent]);
+  }, [messages, activeFolder, filter, query, sortRecent]);
+
+  async function handleSimulate() {
+    const created = await simulateEmail();
+    if (created) {
+      setToast(`New email received — AI classified it as ${created.classification}`);
+      window.setTimeout(() => setToast(""), 3200);
+    }
+  }
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#f7f8fa] text-slate-900 antialiased">
@@ -258,7 +284,7 @@ export default function DashboardPage() {
                   {section.label}
                 </p>
                 <ul className="flex flex-col gap-0.5">
-                  {section.items.map(({ name, icon: Icon, count }) => (
+                  {section.items.map(({ name, icon: Icon }) => (
                     <li key={name}>
                       <button
                         onClick={() => {
@@ -276,11 +302,11 @@ export default function DashboardPage() {
                         >
                           {name}
                         </span>
-                        {count && (
+                        {counts[name] > 0 && (
                           <span
                             className={`text-xs tabular-nums ${activeFolder === name ? "font-semibold text-indigo-600" : "text-slate-400"}`}
                           >
-                            {count}
+                            {counts[name]}
                           </span>
                         )}
                       </button>
@@ -323,6 +349,7 @@ export default function DashboardPage() {
             <div className="relative flex min-w-0 flex-1 items-center sm:max-w-[440px]">
               <Search className="pointer-events-none absolute left-3.5 size-4 text-slate-400" />
               <input
+                ref={searchRef}
                 aria-label="Search email"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -334,6 +361,14 @@ export default function DashboardPage() {
               </kbd>
             </div>
             <div className="ml-auto flex items-center gap-2">
+              <button
+                onClick={handleSimulate}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-[13px] font-semibold text-indigo-700 transition hover:bg-indigo-100"
+              >
+                <Sparkles className="size-3.5" />
+                <span className="hidden md:inline">Simulate new email</span>
+                <span className="md:hidden">Simulate</span>
+              </button>
               <Link
                 href="/client"
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 sm:px-3"
@@ -349,7 +384,9 @@ export default function DashboardPage() {
                       ? "Unread"
                       : filter === "Unread"
                         ? "Starred"
-                        : "All mail",
+                        : filter === "Starred"
+                          ? "Needs review"
+                          : "All mail",
                   )
                 }
                 className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
@@ -412,6 +449,12 @@ export default function DashboardPage() {
                 Compose email
               </button>
             </div>
+            {mode === "demo" && error && (
+              <p className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[13px] text-amber-800">
+                <span>{error}</span>
+                {apiConfigured && <button onClick={() => refresh()} className="font-semibold underline underline-offset-2">Retry</button>}
+              </p>
+            )}
             <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
               {stats.map(({ label, value, change, icon: Icon, tone, mark }) => (
                 <article
@@ -486,6 +529,23 @@ export default function DashboardPage() {
                 <span>Classification</span>
                 <span className="text-right">Received</span>
               </div>
+              {loading && apiConfigured && (
+                <div aria-label="Loading emails" className="divide-y divide-slate-100">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="animate-pulse px-5 py-4">
+                      <div className="h-3 w-40 rounded bg-slate-100" />
+                      <div className="mt-3 h-3 w-3/4 rounded bg-slate-100" />
+                      <div className="mt-2 h-3 w-1/2 rounded bg-slate-100" />
+                    </div>
+                  ))}
+                </div>
+              )}
+              {shownMessages.length === 0 && !(loading && apiConfigured) && (
+                <div className="px-6 py-16 text-center">
+                  <p className="text-sm font-semibold text-slate-700">Nothing here yet</p>
+                  <p className="mt-1 text-[13px] text-slate-500">No conversations match this view. Try another folder or clear the search.</p>
+                </div>
+              )}
               <div role="list" aria-label="Email messages">
                 {shownMessages.map((message) => (
                   <div
@@ -537,6 +597,15 @@ export default function DashboardPage() {
                       >
                         {message.classification}
                       </span>
+                      {message.needsReview && (
+                        <span className="ml-1.5 inline-flex rounded-md bg-amber-50 px-1.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Needs review</span>
+                      )}
+                      {message.overdue ? (
+                        <span className="ml-1.5 inline-flex rounded-md bg-orange-50 px-1.5 py-1 text-[11px] font-semibold text-orange-700 ring-1 ring-inset ring-orange-200" title="Reply Radar: the client has not replied yet">Client quiet for {message.overdue} days</span>
+                      ) : null}
+                      {message.handledBy && (
+                        <span className="ml-1.5 inline-flex rounded-md bg-emerald-50 px-1.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">Handled by {message.handledBy}{message.handledAt ? ` · ${timeAgo(message.handledAt)}` : ""}</span>
+                      )}
                       <div className="mt-1.5 flex items-center gap-1 text-[13px] text-slate-400">
                         <span className="h-1 w-[42px] overflow-hidden rounded-full bg-slate-100">
                           <span
@@ -640,11 +709,14 @@ export default function DashboardPage() {
           </div>
         </section>
       </div>
+      <div aria-live="polite" className={`fixed bottom-5 left-1/2 z-30 flex max-w-[92vw] -translate-x-1/2 items-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-[13px] font-medium text-white shadow-xl transition ${toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
+        <Sparkles className="size-3.5 text-indigo-300" />{toast}
+      </div>
       <InboxChatPanel
         open={chatOpen}
         onClose={() => setChatOpen(false)}
-        onOpenEmail={(email) => {
-          const found = messages.find((m) => m.email === email);
+        onOpenEmail={(id) => {
+          const found = messages.find((m) => m.id === id);
           if (found) setSelectedId(found.id);
           setChatOpen(false);
         }}

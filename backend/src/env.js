@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 // - feature flags
 // - app configuration
 
-dotenv.config({ path: process.env.DOTENV_PATH || '.env.local' });
+dotenv.config();
 
 export const config = {
   port: process.env.PORT || 5000,
