@@ -11,8 +11,11 @@ const app = express();
 
 app.use(express.json());
 
+// Allow the local dev server and the deployed frontend (set FRONTEND_URL on Render).
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000'].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 
