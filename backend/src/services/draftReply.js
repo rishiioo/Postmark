@@ -1,26 +1,22 @@
-// Service to draft replies using AI
-// TODO: Implement reply drafting logic
-// - generateDraftReply - generate AI draft reply based on thread context
-// - customizeDraft - adjust tone and style of draft
-// - evaluateConfidence - calculate confidence score for draft reply
+import { generateText } from './llmClient.js';
+import { formatConversation } from './classifyThread.js';
 
-export const generateDraftReply = async (threadContext) => {
-  try {
-    // TODO: Implement AI generation logic
-    return {
-      draft: 'Thank you for your email. I have received your request and will get back to you shortly.',
-      confidence: 0.90,
-    };
-  } catch (error) {
-    throw new Error(`Draft generation failed: ${error.message}`);
-  }
-};
+const SYSTEM = `You write short, professional email replies on behalf of a personal assistant (signing as "Jordan Davis").
+Reply in the same language as the conversation. Be concise, polite and specific. Do not invent facts, prices or dates that are not in the conversation.
+Return only the email body text, no subject line and no commentary.`;
 
-export const customizeDraft = async (draft, tone) => {
+function templateDraft(thread) {
+  const last = thread.messages[thread.messages.length - 1];
+  const sender = thread.participants?.find((p) => p.email === last?.from)?.name?.split(' ')[0] || 'there';
+  return `Hi ${sender},\n\nThank you for your message regarding "${thread.subject}". I have noted the details and will come back to you shortly with next steps.\n\nBest regards,\nJordan Davis`;
+}
+
+// Drafts are NEVER sent automatically; the assistant reviews and approves in the UI.
+export async function generateDraftReply(thread) {
   try {
-    // TODO: Implement tone adjustment logic
-    return draft;
-  } catch (error) {
-    throw new Error(`Draft customization failed: ${error.message}`);
+    return await generateText({ system: SYSTEM, prompt: formatConversation(thread) });
+  } catch (err) {
+    console.warn('Draft generation failed, using template:', err.message);
+    return templateDraft(thread);
   }
-};
+}

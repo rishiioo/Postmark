@@ -1,32 +1,30 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import { config } from './env.js';
 import threadsRoute from './routes/threads.js';
-
-dotenv.config();
+import rulesRoute from './routes/rules.js';
+import chatRoute from './routes/chat.js';
+import simulateRoute from './routes/simulate.js';
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
+app.use(cors({ origin: config.clientUrls, credentials: true }));
 
-// Allow the local dev server and the deployed frontend (set FRONTEND_URL on Render).
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000'].filter(Boolean);
-
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
-
-connectDB();
-
-const PORT = config.port;
-
-app.get('/', (req, res) => {
-  res.send('AI Email Management Dashboard Backend API');
-});
+app.get('/', (_req, res) => res.send('Postmark API is running'));
+app.get('/api/health', (_req, res) => res.json({ ok: true, llm: Boolean(config.llm.apiKey) }));
 
 app.use('/api/threads', threadsRoute);
+app.use('/api/rules', rulesRoute);
+app.use('/api/chat', chatRoute);
+app.use('/api/simulate-email', simulateRoute);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// eslint-disable-next-line no-unused-vars
+app.use((err, _req, res, _next) => {
+  console.error(err);
+  res.status(500).json({ success: false, error: 'Something went wrong' });
+});
+
+await connectDB();
+app.listen(config.port, () => console.log(`Postmark API listening on port ${config.port}`));

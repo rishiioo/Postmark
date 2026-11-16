@@ -27,11 +27,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
+  colorScheme: 'dark light',
+  themeColor: '#09090b',
 }
 
 export default function RootLayout({
@@ -40,12 +37,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased dark">
-        <div className="fixed top-0 right-0 z-50">
-          <ThemeToggle className="h-8 w-8" />
-        </div>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        {/* Dark by default; applies the saved choice before first paint so there is no flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "(function(){try{var t=localStorage.getItem('postmark.theme');var d=t!=='light';var c=document.documentElement.classList;c.toggle('dark',d);c.toggle('light',!d)}catch(e){document.documentElement.classList.add('dark')}})()",
+          }}
+        />
+      </head>
+      <body className="antialiased">
         {children}
+        <ThemeToggle />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

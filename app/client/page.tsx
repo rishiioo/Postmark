@@ -1,28 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useThreads } from '@/lib/store'
+import { overdueDays } from '@/lib/radar'
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, Check, CheckCircle2, Clock3, Mail, Sparkles, UserRound } from 'lucide-react'
 
-type ClientEmail = { id: number; sender: string; email: string; subject: string; received: string; summary: string; reason: string }
-const seedEmails: ClientEmail[] = [
-  { id: 1, sender: 'Marcus Chen', email: 'marcus@figma.com', subject: 'Design partner agreement', received: 'Today, 9:24 AM', summary: 'The updated agreement is ready. Marcus needs your approval on the revised partnership terms before Friday.', reason: 'Only you can approve the new partnership terms.' },
-  { id: 2, sender: 'Priya Sharma', email: 'priya@notion.so', subject: 'Workspace proposal — final decision', received: 'Yesterday', summary: 'Priya has shared the final proposal and needs your preferred plan to prepare the rollout.', reason: 'This requires a decision on your team’s budget.' },
-  { id: 3, sender: 'Sofia Andersson', email: 'sofia@acme.co', subject: 'Leadership offsite dinner', received: 'Yesterday', summary: 'The team is choosing a dinner venue and asked for your preference before reservations are made.', reason: 'They’re asking for your personal preference.' },
-]
-
 export default function ClientInboxPage() {
-  const [emails, setEmails] = useState(seedEmails)
+  const { threads, loading: syncing, updateThread, refresh } = useThreads()
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
-  function resolve(id: number, message: string) {
-    setEmails((current) => current.filter((email) => email.id !== id))
+  const emails = useMemo(
+    () =>
+      threads
+        .filter((t) => t.classification === 'Client to Reply' && !t.isArchived && !t.isCompleted && !t.handledBy)
+        .sort((a, b) => +new Date(b.lastMessageAt) - +new Date(a.lastMessageAt))
+        .map((t) => {
+          const other = t.participants.find((p) => !p.email.includes('jordan@')) ?? t.participants[0]
+          const d = new Date(t.lastMessageAt)
+          const sameDay = d.toDateString() === new Date().toDateString()
+          return {
+            id: t.id,
+            sender: other.name,
+            email: other.email,
+            subject: t.subject,
+            received: sameDay ? `Today, ${d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })}` : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+            summary: t.summary,
+            reason: t.reason,
+            overdue: overdueDays(t),
+          }
+        }),
+    [threads],
+  )
+  function resolve(id: string, message: string) {
+    if (message === 'Marked as handled') updateThread(id, { handledBy: 'client', isCompleted: true, handledAt: new Date().toISOString() })
+    else updateThread(id, { classification: 'Assistant to Reply', correctedByUser: true, reason: 'The client asked the assistant to take over.' })
     setNotice(message)
     window.setTimeout(() => setNotice(''), 2500)
   }
   function showSkeletons() {
     setLoading(true)
-    window.setTimeout(() => setLoading(false), 1200)
+    refresh().finally(() => window.setTimeout(() => setLoading(false), 600))
   }
 
   return (
@@ -51,7 +69,7 @@ export default function ClientInboxPage() {
         <section className="mb-6">
           <p className="mb-2 text-[13px] font-semibold uppercase tracking-[.15em] text-indigo-600">Your personal inbox</p>
           <h1 className="text-[25px] font-semibold leading-tight tracking-[-.055em] sm:text-[34px]">Good morning, Priya</h1>
-          <p className="mt-2 text-[13px] text-slate-500 sm:text-sm">{emails.length ? `${emails.length} things need your attention` : 'You’re all caught up'}</p>
+          <p className="mt-2 text-[13px] text-slate-500 sm:text-sm">{emails.length ? `${emails.length} ${emails.length === 1 ? 'thing needs' : 'things need'} your attention` : 'You’re all caught up'}</p>
         </section>
 
         {emails.length === 0 ? (
@@ -63,14 +81,14 @@ export default function ClientInboxPage() {
           </section>
         ) : (
           <div className="space-y-3">
-            {loading ? [1, 2].map((id) => <div key={id} className="animate-pulse rounded-2xl border border-slate-200 bg-white p-5"><div className="h-3 w-28 rounded bg-slate-100" /><div className="mt-4 h-4 w-3/4 rounded bg-slate-100" /><div className="mt-3 h-3 w-full rounded bg-slate-100" /><div className="mt-2 h-3 w-2/3 rounded bg-slate-100" /></div>) : emails.map((email) => (
+            {loading || syncing ? [1, 2].map((id) => <div key={id} className="animate-pulse rounded-2xl border border-slate-200 bg-white p-5"><div className="h-3 w-28 rounded bg-slate-100" /><div className="mt-4 h-4 w-3/4 rounded bg-slate-100" /><div className="mt-3 h-3 w-full rounded bg-slate-100" /><div className="mt-2 h-3 w-2/3 rounded bg-slate-100" /></div>) : emails.map((email) => (
               <article key={email.id} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,.025)] sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-xs font-semibold text-slate-800">{email.sender}<span className="ml-1.5 font-normal text-slate-400">{email.email}</span></p>
                     <h2 className="mt-2 text-[13px] font-semibold leading-snug tracking-[-.02em] text-slate-900">{email.subject}</h2>
                   </div>
-                  <span className="shrink-0 pt-0.5 text-[13px] text-slate-400">{email.received}</span>
+                  <span className="shrink-0 pt-0.5 text-[13px] text-slate-400">{email.received}{email.overdue ? <span className="ml-2 rounded-md bg-orange-50 px-1.5 py-0.5 text-[11px] font-semibold text-orange-700">Waiting {email.overdue}d</span> : null}</span>
                 </div>
                 <p className="mt-3 text-xs leading-[1.7] text-slate-600">{email.summary}</p>
                 <div className="mt-3 rounded-lg border border-amber-100 bg-amber-50/60 px-3 py-2">

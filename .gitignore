@@ -1,3 +1,16 @@
+# dependencies & build
+node_modules
+.next/
+out/
+*.tsbuildinfo
+.DS_Store
+
+# environment variables (never commit keys)
+.env
+.env.*
+!.env.example
+backend/.env
+
 # v0 sandbox internal files
 __v0_runtime_loader.js
 __v0_devtools.tsx
@@ -6,11 +19,3 @@ __v0_jsx-dev-runtime.ts
 .design-cache/
 .v0-trash/
 .vercel/
-
-# Environment variables
-.env*.local
-
-# Common ignores
-node_modules
-.next/
-.DS_Store-e "\n.env\nbackend/.env" 

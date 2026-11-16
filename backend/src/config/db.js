@@ -1,18 +1,23 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import dns from 'dns';
+import { config } from '../env.js';
 
-// 🌐 Force Node to use Google/Cloudflare DNS (fixes querySrv ECONNREFUSED)
-dns.setServers(['8.8.8.8', '1.1.1.1']);
-
-dotenv.config({ path: process.env.DOTENV_PATH || '.env.local' });
+// Some networks block SRV lookups (querySrv ECONNREFUSED). Use public DNS for Atlas (mongodb+srv) URIs.
+// Set USE_CUSTOM_DNS=false to turn this off.
+if (process.env.USE_CUSTOM_DNS !== 'false' && String(config.mongodbUri || '').startsWith('mongodb+srv://')) {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+}
 
 const connectDB = async () => {
+  if (!config.mongodbUri) {
+    console.error('MONGODB_URI is missing. Copy backend/.env.example to backend/.env and fill it in.');
+    process.exit(1);
+  }
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB Connected...');
+    await mongoose.connect(config.mongodbUri);
+    console.log('MongoDB connected');
   } catch (err) {
-    console.error(err.message);
+    console.error('MongoDB connection failed:', err.message);
     process.exit(1);
   }
 };

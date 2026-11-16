@@ -5,33 +5,30 @@ import { Moon, Sun } from 'lucide-react'
 
 const KEY = 'postmark.theme'
 
+/** Dark is the default. The choice is saved in the browser and applied before first paint (see app/layout.tsx). */
 export function ThemeToggle({ className = '' }: { className?: string }) {
-  const [dark, setDark] = useState(false)
+  const [dark, setDark] = useState(true)
 
   useEffect(() => {
-    let stored: string | null = null
-    try { stored = localStorage.getItem(KEY) } catch { /* storage unavailable */ }
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const initial = stored ? stored === 'dark' : prefersDark
-    setDark(initial)
-    document.documentElement.classList.toggle('dark', initial)
-    document.documentElement.classList.toggle('light', !initial)
+    setDark(document.documentElement.classList.contains('dark'))
   }, [])
 
   function toggle() {
     const next = !dark
     setDark(next)
-    document.documentElement.classList.toggle('dark', next)
-    document.documentElement.classList.toggle('light', !next)
-    try { localStorage.setItem(KEY, next ? 'dark' : 'light') } catch { /* ignore */ }
+    const root = document.documentElement.classList
+    root.toggle('dark', next)
+    root.toggle('light', !next)
+    try { localStorage.setItem(KEY, next ? 'dark' : 'light') } catch { /* storage unavailable */ }
   }
 
   return (
     <button
+      type="button"
       onClick={toggle}
       aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={dark ? 'Switch to light theme' : 'Switch to dark theme'}
-      className={`grid size-9 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 ${className}`}
+      className={`fixed bottom-4 right-4 z-50 grid size-9 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-lg transition hover:text-slate-900 dark:border-white/10 dark:bg-[#18181b] dark:text-zinc-300 dark:hover:text-white ${className}`}
     >
       {dark ? <Sun className="size-[17px]" /> : <Moon className="size-[17px]" />}
     </button>

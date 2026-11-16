@@ -1,0 +1,522 @@
+[
+  {
+    "subject": "Q4 Diwali Campaign — Final Creative Assets",
+    "participants": [
+      {
+        "name": "Rajesh Kumar",
+        "email": "rajesh.kumar@tcs.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "rajesh.kumar@tcs.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nSharing the final Diwali campaign creatives. We've incorporated the festive color palette feedback from last week and updated the launch assets for all platforms. Could you review and approve so we can schedule the launch by Friday?\n\nThanks,\nRajesh",
+        "sentAt": "2026-11-15T10:50:39.829Z"
+      },
+      {
+        "from": "priya.sharma@infosys.com",
+        "to": "rajesh.kumar@tcs.com",
+        "body": "Thanks, Rajesh — I'll review this morning and get back to you by EOD.",
+        "sentAt": "2026-11-15T11:50:39.829Z"
+      },
+      {
+        "from": "rajesh.kumar@tcs.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Just following up — the media team needs final sign-off by 4 PM today to meet the Diwali week launch window.",
+        "sentAt": "2026-11-15T13:50:39.829Z"
+      }
+    ],
+    "classification": "Assistant to Reply",
+    "confidence": 98,
+    "reason": "Sender explicitly requests approval on final assets before campaign launch.",
+    "summary": "Rajesh from TCS sent final Diwali campaign assets and needs approval before scheduling launch this week.",
+    "deadlines": [
+      "Campaign launch pending approval · Respond by 4 PM today"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T13:50:39.829Z"
+  },
+  {
+    "subject": "Re: Design Partner Sync — Reschedule Request",
+    "participants": [
+      {
+        "name": "Priya Sharma",
+        "email": "priya.sharma@infosys.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "priya.sharma@infosys.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hey Jordan,\n\nCan we push Thursday's partner sync to 3:30 PM IST? Something urgent came up with the Infosys leadership review for the morning slot.\n\nThanks,\nPriya",
+        "sentAt": "2026-11-15T12:50:39.829Z"
+      }
+    ],
+    "classification": "Action Required",
+    "confidence": 96,
+    "reason": "Schedule conflict resolution requires checking availability and updating the calendar invite.",
+    "summary": "Priya from Infosys requests moving Thursday's partner sync to 3:30 PM IST due to a leadership review conflict.",
+    "deadlines": [
+      "Respond before end of day today"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T12:50:39.829Z"
+  },
+  {
+    "subject": "Updated Enterprise Proposal — Custom Tier Pricing",
+    "participants": [
+      {
+        "name": "Amit Patel",
+        "email": "amit.patel@wipro.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "amit.patel@wipro.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nI've attached the revised enterprise proposal with the custom tier pricing we discussed. The new structure includes:\n- Starter: ₹15,000/mo (up to 5 users)\n- Growth: ₹45,000/mo (up to 20 users)\n- Enterprise: Custom pricing (unlimited users + dedicated support)\n\nLet me know your thoughts on the user tiering and the annual commitment discount.\n\nBest regards,\nAmit",
+        "sentAt": "2026-11-15T11:50:39.829Z"
+      }
+    ],
+    "classification": "Client to Reply",
+    "confidence": 94,
+    "reason": "Requires executive decision on team tier and annual budget allocation.",
+    "summary": "Amit from Wipro shared revised enterprise proposal with custom tier pricing and needs feedback on user tiering.",
+    "deadlines": [
+      "Decision requested by Friday"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T11:50:39.829Z"
+  },
+  {
+    "subject": "Introduction: Sam from Razorpay Partnership Team",
+    "participants": [
+      {
+        "name": "Sneha Reddy",
+        "email": "sneha.reddy@hcl.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      },
+      {
+        "name": "Vikram Singh",
+        "email": "vikram.singh@techmahindra.com"
+      }
+    ],
+    "messages": [
+      {
+        "from": "sneha.reddy@hcl.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nI'd like to introduce Sam (cc'd) from Razorpay's partnership team. They're exploring integration possibilities with our payment gateway for the new merchant onboarding flow.\n\nSam — Jordan leads our platform partnerships. I'll let you both take it from here.\n\nBest,\nSneha",
+        "sentAt": "2026-11-15T08:50:39.829Z"
+      },
+      {
+        "from": "vikram.singh@techmahindra.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Thanks for the intro, Sneha. Hi Jordan, looking forward to exploring how we can collaborate. Happy to set up a call next week?",
+        "sentAt": "2026-11-15T09:50:39.829Z"
+      },
+      {
+        "from": "priya.sharma@infosys.com",
+        "to": "vikram.singh@techmahindra.com",
+        "body": "Hi Sam, thanks for reaching out. Let's schedule a call next Tuesday 11 AM IST?",
+        "sentAt": "2026-11-15T10:50:39.829Z"
+      }
+    ],
+    "classification": "No Reply Needed",
+    "confidence": 99,
+    "reason": "Introduction made; follow-up scheduled. No immediate action required from you.",
+    "summary": "Sneha from HCL introduced Sam from Razorpay for partnership discussions; call scheduled for Tuesday.",
+    "deadlines": [],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": false,
+    "isArchived": false,
+    "isCompleted": true,
+    "handledBy": "assistant",
+    "lastMessageAt": "2026-11-15T10:50:39.829Z"
+  },
+  {
+    "subject": "Q3 Leadership Offsite — Agenda & Dinner Preferences",
+    "participants": [
+      {
+        "name": "Anjali Gupta",
+        "email": "anjali.gupta@mindtree.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "anjali.gupta@mindtree.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nAttached is the draft agenda for next week's leadership offsite in Goa. Key sessions:\n- Monday 10 AM: Business Review\n- Tuesday 9 AM: Strategy Planning\n- Wednesday 10 AM: Team Building\n\nAlso, the team is finalizing the dinner venue for Monday night. Could you share your preference between:\n1. Beachside BBQ at Martin's Corner\n2. Fine dining at The Black Sheep Bistro\n3. Traditional Goan at Gunpowder\n\nPlease reply by EOD tomorrow.\n\nThanks,\nAnjali",
+        "sentAt": "2026-11-15T09:50:39.829Z"
+      }
+    ],
+    "classification": "Meetings",
+    "confidence": 97,
+    "reason": "Requires your dinner preference for offsite planning by end of day tomorrow.",
+    "summary": "Anjali from Mindtree shared the leadership offsite agenda and needs dinner venue preference by tomorrow EOD.",
+    "deadlines": [
+      "Dinner preference needed by tomorrow EOD"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": false,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T09:50:39.829Z"
+  },
+  {
+    "subject": "Invoice #INV-2024-048 — Payment Due",
+    "participants": [
+      {
+        "name": "Rahul Mehta",
+        "email": "rahul.mehta@lntinfotech.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "rahul.mehta@lntinfotech.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nThe monthly invoice for October services is attached. Amount: ₹2,45,000 (inclusive of 18% GST). Payment is due by November 25th.\n\nPlease process at your earliest convenience.\n\nRegards,\nRahul\nL&T Infotech Finance",
+        "sentAt": "2026-11-15T02:50:39.829Z"
+      }
+    ],
+    "classification": "Action Required",
+    "confidence": 92,
+    "reason": "Invoice payment due November 25th; requires finance team action.",
+    "summary": "Rahul from L&T Infotech sent October invoice for ₹2.45L; payment due by November 25th.",
+    "deadlines": [
+      "Payment due by November 25th"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T02:50:39.829Z"
+  },
+  {
+    "subject": "Re: Strategic Partnership Agreement — Signature Pending",
+    "participants": [
+      {
+        "name": "Kavya Nair",
+        "email": "kavya.nair@mphasis.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "kavya.nair@mphasis.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nFollowing up on the partnership agreement sent last week. Our legal team is ready to proceed once we receive the signed copy from your side.\n\nLet me know if you need any clarifications on the terms.\n\nBest,\nKavya\nMphasis Legal",
+        "sentAt": "2026-11-14T14:50:39.829Z"
+      },
+      {
+        "from": "priya.sharma@infosys.com",
+        "to": "kavya.nair@mphasis.com",
+        "body": "Hi Kavya, our legal is reviewing the liability clause. Will revert by Friday.",
+        "sentAt": "2026-11-14T18:50:39.829Z"
+      }
+    ],
+    "classification": "Waiting for Response",
+    "confidence": 95,
+    "reason": "You replied that legal is reviewing; waiting for your follow-up.",
+    "summary": "Kavya from Mphasis is waiting for the signed partnership agreement; legal review in progress.",
+    "deadlines": [
+      "Legal review completion by Friday"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-14T18:50:39.829Z"
+  },
+  {
+    "subject": "Your Razorpay Account — Quarterly Review Required",
+    "participants": [
+      {
+        "name": "Razorpay Compliance",
+        "email": "compliance@razorpay.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "arjun.desai@hexaware.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Dear Merchant,\n\nAs part of our quarterly compliance review, we need to verify your account details and transaction patterns. Please complete the review form by November 30th to avoid any payout disruptions.\n\nLink: https://dashboard.razorpay.com/compliance/review\n\nRegards,\nRazorpay Compliance Team",
+        "sentAt": "2026-11-14T02:50:39.829Z"
+      }
+    ],
+    "classification": "Important",
+    "confidence": 99,
+    "reason": "Compliance review required to maintain uninterrupted payouts; deadline November 30th.",
+    "summary": "Razorpay requires quarterly compliance review by November 30th to avoid payout disruptions.",
+    "deadlines": [
+      "Complete review by November 30th"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-14T02:50:39.829Z"
+  },
+  {
+    "subject": "Customer Call Notes — Flipkart Enterprise Deal",
+    "participants": [
+      {
+        "name": "Meera Iyer",
+        "email": "meera.iyer@zensar.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "meera.iyer@zensar.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nSharing notes from Monday's call with Flipkart's procurement team:\n1. They're evaluating 3 vendors — we're the preferred technical choice\n2. Budget approval pending CFO sign-off (expected this week)\n3. They need a pilot proposal for 500 users by Friday\n4. Legal has raised questions on data residency — need our compliance deck\n\nThree follow-ups needed:\n- Send pilot proposal by Friday\n- Share updated compliance deck\n- Schedule CFO intro call\n\nLet me know how you'd like to proceed.\n\nBest,\nMeera",
+        "sentAt": "2026-11-15T06:50:39.829Z"
+      }
+    ],
+    "classification": "Assistant to Reply",
+    "confidence": 91,
+    "reason": "Multiple action items from customer call require your direction on next steps.",
+    "summary": "Meera from Zensar shared Flipkart deal notes with 3 follow-ups: pilot proposal, compliance deck, CFO intro call.",
+    "deadlines": [
+      "Pilot proposal due Friday",
+      "Compliance deck needed",
+      "Schedule CFO call"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": false,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T06:50:39.829Z"
+  },
+  {
+    "subject": "Health Insurance Renewal — Policy #HLT-2024-78945",
+    "participants": [
+      {
+        "name": "HDFC ERGO",
+        "email": "renewals@hdfcergo.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@personal.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "siddharth.rao@sonata-software.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Dear Jordan,\n\nYour family health insurance policy (HLT-2024-78945) is due for renewal on December 15th. The renewal premium is ₹42,500 (including 18% GST) for the same coverage.\n\nNew add-ons available:\n- Critical Illness: +₹8,500\n- Maternity Cover: +₹12,000\n- OPD Coverage: +₹5,000\n\nPlease confirm renewal and any add-ons by December 10th.\n\nRegards,\nHDFC ERGO Renewals Team",
+        "sentAt": "2026-11-13T14:50:39.829Z"
+      }
+    ],
+    "classification": "Action Required",
+    "confidence": 93,
+    "reason": "Personal health insurance renewal due December 15th; decision needed on add-ons by December 10th.",
+    "summary": "HDFC ERGO health insurance renewal due Dec 15th for ₹42,500; add-on options available, decision needed by Dec 10th.",
+    "deadlines": [
+      "Renewal decision by December 10th",
+      "Policy expires December 15th"
+    ],
+    "segment": "personal",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-13T14:50:39.829Z"
+  },
+  {
+    "subject": "Your SIP Portfolio — Quarterly Performance Update",
+    "participants": [
+      {
+        "name": "Zerodha Coin",
+        "email": "updates@zerodha.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@personal.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "divya.krishnan@cyient.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nYour SIP portfolio quarterly update (Q3 FY25):\n\nTotal Invested: ₹12,50,000\nCurrent Value: ₹14,87,500\nAbsolute Returns: +19.0%\nXIRR: 16.2%\n\nTop Performers:\n- Parag Parikh Flexi Cap: +24.5%\n- Kotak Emerging Equity: +21.3%\n- Axis Midcap: +18.7%\n\nUnderperformers:\n- Nippon India Small Cap: +8.2%\n\nNo action required. This is for your information.\n\nHappy Investing!\nTeam Zerodha Coin",
+        "sentAt": "2026-11-12T14:50:39.829Z"
+      }
+    ],
+    "classification": "No Reply Needed",
+    "confidence": 100,
+    "reason": "Informational quarterly portfolio update; no action required.",
+    "summary": "Zerodha Coin quarterly SIP update: ₹12.5L invested, ₹14.87L current value (+19% returns). No action needed.",
+    "deadlines": [],
+    "segment": "personal",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": false,
+    "isArchived": false,
+    "isCompleted": true,
+    "handledBy": "assistant",
+    "lastMessageAt": "2026-11-12T14:50:39.829Z"
+  },
+  {
+    "subject": "Security Alert: New Login from Bangalore",
+    "participants": [
+      {
+        "name": "Google Security",
+        "email": "security@google.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "divya.krishnan@cyient.com",
+        "to": "priya.sharma@infosys.com",
+        "body": "Hi Jordan,\n\nWe detected a new sign-in to your Google Account from:\n- Location: Bangalore, Karnataka, India\n- Device: Chrome on Windows\n- Time: Today, 9:15 AM IST\n\nIf this was you, you can ignore this email. If not, please secure your account immediately:\nhttps://myaccount.google.com/security\n\nBest,\nGoogle Security Team",
+        "sentAt": "2026-11-15T14:20:39.829Z"
+      }
+    ],
+    "classification": "Important",
+    "confidence": 98,
+    "reason": "Security alert for new login; verify if this was you.",
+    "summary": "Google security alert: new login detected from Bangalore at 9:15 AM IST today. Verify if authorized.",
+    "deadlines": [
+      "Verify immediately if unauthorized"
+    ],
+    "segment": "workspace",
+    "needsReview": true,
+    "correctedByUser": false,
+    "isRead": false,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-15T14:20:39.829Z"
+  },
+  {
+    "subject": "Annual support contract renewal — your sign-off needed",
+    "participants": [
+      {
+        "name": "Meera Iyer",
+        "email": "meera.iyer@zensar.com"
+      },
+      {
+        "name": "Jordan Davis",
+        "email": "jordan@postmark.in"
+      }
+    ],
+    "messages": [
+      {
+        "from": "meera.iyer@zensar.com",
+        "to": "jordan@postmark.in",
+        "body": "Hi Jordan,\n\nOur annual support contract is due for renewal on 30 November. The renewed terms include a 6% price increase and a longer 24-month commitment. We need written sign-off from the client before we can issue the new agreement.\n\nRegards,\nMeera",
+        "sentAt": "2026-11-12T06:50:39.829Z"
+      },
+      {
+        "from": "meera.iyer@zensar.com",
+        "to": "jordan@postmark.in",
+        "body": "Hi Jordan, following up on the renewal below. Could you confirm whether the client is comfortable with the revised terms? We would like to close this before month end.",
+        "sentAt": "2026-11-13T06:50:39.829Z"
+      }
+    ],
+    "classification": "Client to Reply",
+    "confidence": 91,
+    "reason": "A contract renewal with a price increase needs the client’s own written approval.",
+    "summary": "Zensar wants the client’s sign-off on a support contract renewal (6% increase, 24-month term) before 30 November.",
+    "deadlines": [
+      "Sign-off needed before 30 November"
+    ],
+    "segment": "workspace",
+    "needsReview": false,
+    "correctedByUser": false,
+    "isRead": true,
+    "isImportant": true,
+    "isArchived": false,
+    "isCompleted": false,
+    "handledBy": null,
+    "lastMessageAt": "2026-11-13T06:50:39.829Z"
+  }
+]

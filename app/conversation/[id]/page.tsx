@@ -1,9 +1,12 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useThread } from '@/lib/store'
+import { overdueDays } from '@/lib/radar'
+import type { Thread } from '@/lib/types'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, Archive, CalendarDays, Check, ChevronDown, Clock3, Mail, MoreHorizontal, Send, ShieldCheck, Sparkles, Star, UserRound } from 'lucide-react'
+import { ArrowLeft, Archive, AlertTriangle, CalendarDays, Check, ChevronDown, Clock3, Mail, MoreHorizontal, Send, ShieldCheck, Sparkles, Star, UserRound } from 'lucide-react'
 
 type ConversationData = {
   id: string
@@ -26,96 +29,100 @@ type ConversationData = {
   suggestedDraft: string
 }
 
-const mockConversations: Record<string, ConversationData> = {
-  '1': {
-    id: '1',
-    subject: 'Q4 brand campaign — final assets',
-    category: 'Assistant to Reply',
-    confidence: 98,
-    summary: 'Olivia sent final Q4 campaign assets and is waiting for your approval before scheduling launch.',
-    why: 'The sender asks you to approve final assets before the team can schedule the campaign launch.',
-    deadline: 'Campaign launch pending your approval · Follow up by end of day',
-    participantCount: 3,
-    thread: [
-      { name: 'Olivia Rhye', email: 'olivia@acme.co', initials: 'OR', avatarColor: 'bg-rose-100 text-rose-700', time: 'Today, 9:18 AM', recipient: 'To Jordan Davis', content: 'Hi Jordan,\n\nSharing the latest campaign assets for Q4. We’ve incorporated the feedback from last week and updated the launch creative. Could you take a look and let me know if you’re happy for us to move forward?\n\nThanks,\nOlivia' },
-      { name: 'Jordan Davis', email: 'jordan@acme.co', initials: 'JD', avatarColor: 'bg-indigo-100 text-indigo-700', time: 'Today, 9:34 AM', recipient: 'To Olivia Rhye', content: 'Thanks, Olivia — I’ll take a look this morning and get back to you.' },
-      { name: 'Olivia Rhye', email: 'olivia@acme.co', initials: 'OR', avatarColor: 'bg-rose-100 text-rose-700', time: 'Today, 10:42 AM', recipient: 'To Jordan Davis', content: 'Just checking this landed in your inbox. The team is ready to schedule the launch as soon as we have your approval.' },
-    ],
-    suggestedDraft: 'Hi Olivia,\n\nThanks for the updated assets. The direction looks great — please go ahead and schedule the launch.\n\nBest,\nJordan',
-  },
-  '2': {
-    id: '2',
-    subject: 'Re: Design partner check-in',
-    category: 'Action Required',
-    confidence: 96,
-    summary: 'Marcus is asking to move Thursday’s call to 2:30 PM; calendar is currently clear.',
-    why: 'Schedule conflict resolution requires checking availability and updating the invite.',
-    deadline: 'Respond before end of day today',
-    participantCount: 2,
-    thread: [
-      { name: 'Marcus Chen', email: 'marcus@figma.com', initials: 'MC', avatarColor: 'bg-amber-100 text-amber-700', time: 'Today, 10:18 AM', recipient: 'To Jordan Davis', content: 'Hey Jordan,\n\nCan we push Thursday’s partner sync to 2:30 PM PT? Something urgent came up on my side for the morning slot.\n\nThanks,\nMarcus' },
-    ],
-    suggestedDraft: 'Hi Marcus,\n\n2:30 PM PT on Thursday works perfectly for me. I’ve updated the calendar invite.\n\nBest,\nJordan',
-  },
-  '3': {
-    id: '3',
-    subject: 'Updated proposal for workspace',
-    category: 'Client to Reply',
-    confidence: 94,
-    summary: 'Revised proposal is ready to review, with updated pricing and the new team rollout plan.',
-    why: 'Requires executive decision on team tier and annual budget allocation.',
-    deadline: 'Decision requested by Friday',
-    participantCount: 2,
-    thread: [
-      { name: 'Priya Sharma', email: 'priya@notion.so', initials: 'PS', avatarColor: 'bg-violet-100 text-violet-700', time: 'Today, 9:56 AM', recipient: 'To Jordan Davis', content: 'Hi Jordan,\n\nI’ve attached the revised proposal with the custom enterprise tiers we discussed. Let me know your thoughts on the user tiering.\n\nBest regards,\nPriya' },
-    ],
-    suggestedDraft: 'Hi Priya,\n\nThanks for sending over the revised numbers. I’ll review the user tier breakdown with the team and get back to you by tomorrow.\n\nBest,\nJordan',
-  },
-}
+const labels = ['Assistant to Reply', 'Client to Reply', 'Action Required', 'Meetings', 'Important', 'No Reply Needed', 'Waiting for Response']
+const palette = ['bg-indigo-100 text-indigo-700', 'bg-rose-100 text-rose-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-violet-100 text-violet-700']
 
-const labels = ['Assistant to Reply', 'Client to Reply', 'Action Required', 'Meetings', 'No Reply Needed', 'Waiting for Response']
+function toConversation(t: Thread): ConversationData {
+  return {
+    id: t.id,
+    subject: t.subject,
+    category: t.classification,
+    confidence: t.confidence,
+    summary: t.summary,
+    why: t.reason,
+    deadline: t.deadlines[0] ?? 'No dates or deadlines detected',
+    participantCount: t.participants.length,
+    thread: t.messages.map((m) => {
+      const sender = t.participants.find((p) => p.email === m.from)
+      const name = sender?.name ?? m.from
+      const recipient = t.participants.find((p) => p.email === m.to)?.name ?? m.to
+      const d = new Date(m.sentAt)
+      return {
+        name,
+        email: m.from,
+        initials: name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase(),
+        avatarColor: palette[(name.charCodeAt(0) || 0) % palette.length],
+        time: d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }),
+        recipient: `To ${recipient}`,
+        content: m.body,
+      }
+    }),
+    suggestedDraft: '',
+  }
+}
 
 export default function ConversationDynamicPage() {
   const params = useParams()
   const rawId = params?.id
-  const id = Array.isArray(rawId) ? rawId[0] : (rawId ?? '1')
+  const id = Array.isArray(rawId) ? rawId[0] : (rawId ?? '')
+  const { thread, loading, updateThread, generateDraft, saveRule } = useThread(id)
+  const conversation = useMemo(() => (thread ? toConversation(thread) : null), [thread])
 
-  const conversation = useMemo(() => {
-    if (mockConversations[id]) return mockConversations[id]
-    // Default fallback dynamically using the id
-    return {
-      id,
-      subject: `Conversation #${id}`,
-      category: 'Assistant to Reply',
-      confidence: 95,
-      summary: `Conversation details and AI-classified message thread for #${id}.`,
-      why: 'This thread requires follow-up according to your workspace rules.',
-      deadline: 'Follow up needed soon',
-      participantCount: 2,
-      thread: [
-        {
-          name: 'Sender',
-          email: `sender-${id}@example.com`,
-          initials: 'SN',
-          avatarColor: 'bg-indigo-100 text-indigo-700',
-          time: 'Today, 10:00 AM',
-          recipient: 'To Jordan Davis',
-          content: 'Hi Jordan,\n\nFollowing up on our earlier discussion. Looking forward to your thoughts.\n\nBest regards,',
-        },
-      ],
-      suggestedDraft: 'Hi,\n\nThanks for following up. Everything looks good on my end.\n\nBest,\nJordan',
-    }
-  }, [id])
-
-  const [classification, setClassification] = useState(conversation.category)
   const [insightsOpen, setInsightsOpen] = useState(false)
-  const [draft, setDraft] = useState(conversation.suggestedDraft)
+  const [draft, setDraft] = useState('')
+  const [drafting, setDrafting] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const [sent, setSent] = useState(false)
+  const [rulePrompt, setRulePrompt] = useState<string | null>(null)
   const [notice, setNotice] = useState('')
+
+  useEffect(() => {
+    if (thread && !thread.isRead) updateThread(thread.id, { isRead: true })
+  }, [thread, updateThread])
 
   function notify(message: string) {
     setNotice(message)
     window.setTimeout(() => setNotice(''), 2400)
+  }
+
+  if (!thread || !conversation) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-[#f7f8fa] px-4 text-center text-slate-900">
+        <div>
+          <p className="text-sm font-semibold">{loading ? 'Loading conversation…' : 'Conversation not found'}</p>
+          {!loading && <p className="mt-1 text-[13px] text-slate-500">It may have been removed or the link is incorrect.</p>}
+          <Link href="/dashboard" className="mt-4 inline-flex text-[13px] font-semibold text-indigo-600">Back to inbox</Link>
+        </div>
+      </main>
+    )
+  }
+
+  const classification = thread.classification
+  const otherParty = thread.participants.find((p) => !p.email.includes('jordan@')) ?? thread.participants[0]
+
+  function changeClassification(value: string) {
+    updateThread(thread!.id, { classification: value, correctedByUser: true, needsReview: false })
+    setRulePrompt(value)
+    notify(`Moved to ${value}`)
+  }
+
+  async function handleGenerate() {
+    setDrafting(true)
+    try { setDraft(await generateDraft(thread!.id)) } finally { setDrafting(false) }
+  }
+
+  function handleSend() {
+    const now = new Date().toISOString()
+    updateThread(thread!.id, {
+      messages: [...thread!.messages, { from: 'jordan@postmark.in', to: otherParty.email, body: draft, sentAt: now }],
+      lastMessageAt: now,
+      classification: 'Waiting for Response',
+      needsReview: false,
+      isRead: true,
+    })
+    setSent(true)
+    setConfirming(false)
+    notify('Reply sent (simulated) — now waiting for a response')
   }
 
   return (
@@ -129,14 +136,17 @@ export default function ConversationDynamicPage() {
           postmark<span className="text-indigo-600">.</span>
         </Link>
         <div className="flex items-center gap-1">
-          <button onClick={() => notify('Conversation archived')} aria-label="Archive" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
+          <button onClick={() => { updateThread(thread.id, { isArchived: !thread.isArchived }); notify(thread.isArchived ? 'Moved back to inbox' : 'Conversation archived') }} aria-label="Archive" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
             <Archive className="size-4" />
           </button>
-          <button onClick={() => notify('Marked important')} aria-label="Mark important" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
-            <Star className="size-4" />
+          <button onClick={() => { updateThread(thread.id, { isImportant: !thread.isImportant }); notify(thread.isImportant ? 'Removed from important' : 'Marked important') }} aria-label="Mark important" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
+            <Star className={`size-4 ${thread.isImportant ? 'fill-amber-400 text-amber-500' : ''}`} />
           </button>
-          <button aria-label="More actions" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
-            <MoreHorizontal className="size-4" />
+          <button onClick={() => { updateThread(thread.id, { isRead: false }); notify('Marked as unread') }} aria-label="Mark unread" className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100">
+            <Mail className="size-4" />
+          </button>
+          <button onClick={() => { updateThread(thread.id, { isCompleted: !thread.isCompleted, handledBy: thread.isCompleted ? null : 'assistant' }); notify(thread.isCompleted ? 'Reopened' : 'Marked as completed') }} aria-label="Mark completed" className={`grid size-8 place-items-center rounded-lg hover:bg-slate-100 ${thread.isCompleted ? 'text-emerald-600' : 'text-slate-500'}`}>
+            <Check className="size-4" />
           </button>
         </div>
       </header>
@@ -180,10 +190,11 @@ export default function ConversationDynamicPage() {
                   <Sparkles className="size-3.5 text-indigo-600" />Draft reply
                 </h2>
                 <button
-                  onClick={() => setDraft(conversation.suggestedDraft)}
-                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-semibold text-indigo-700 hover:bg-indigo-100"
+                  onClick={handleGenerate}
+                  disabled={drafting}
+                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-semibold text-indigo-700 hover:bg-indigo-100 disabled:opacity-60"
                 >
-                  <Sparkles className="size-3" />Generate AI draft
+                  <Sparkles className="size-3" />{drafting ? 'Drafting…' : 'Generate AI draft'}
                 </button>
               </div>
               {sent ? (
@@ -197,18 +208,25 @@ export default function ConversationDynamicPage() {
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
                     rows={5}
+                    placeholder="Click “Generate AI draft”, or write your own reply. Nothing is sent until you approve."
                     className="w-full resize-y border-0 px-4 py-3 text-xs leading-[1.8] text-slate-600 outline-none focus:ring-0"
                   />
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
                     <p className="flex items-center gap-1.5 text-[13px] text-slate-400">
                       <ShieldCheck className="size-3.5" />AI drafts should be reviewed before sending.
                     </p>
-                    <button
-                      onClick={() => setSent(true)}
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 text-[13px] font-semibold text-white hover:bg-indigo-700"
-                    >
-                      <Send className="size-3" />Approve &amp; Send
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {confirming && (
+                        <button onClick={() => setConfirming(false)} className="h-8 rounded-lg px-3 text-[13px] font-semibold text-slate-500 hover:bg-slate-100">Cancel</button>
+                      )}
+                      <button
+                        onClick={() => (confirming ? handleSend() : setConfirming(true))}
+                        disabled={!draft.trim()}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 text-[13px] font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+                      >
+                        <Send className="size-3" />{confirming ? 'Yes, send it' : 'Approve & Send'}
+                      </button>
+                    </div>
                   </div>
                 </>
               )}
@@ -237,11 +255,26 @@ export default function ConversationDynamicPage() {
                   <select
                     aria-label="Change classification"
                     value={classification}
-                    onChange={(event) => setClassification(event.target.value)}
+                    onChange={(event) => changeClassification(event.target.value)}
                     className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-semibold text-indigo-700 outline-none focus:border-indigo-300"
                   >
                     {labels.map((label) => <option key={label}>{label}</option>)}
                   </select>
+                  {thread.correctedByUser && <p className="mt-1.5 text-[12px] font-semibold text-emerald-600">Corrected by you</p>}
+                  {rulePrompt && (
+                    <div className="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/60 p-2.5 text-[13px] text-indigo-900">
+                      Always treat emails from {otherParty.name} as <strong>{rulePrompt}</strong>?
+                      <div className="mt-2 flex gap-2">
+                        <button onClick={() => { saveRule(otherParty.email, rulePrompt).catch(() => {}); setRulePrompt(null); notify('Rule saved for this sender') }} className="rounded-md bg-indigo-600 px-2.5 py-1 text-[12px] font-semibold text-white">Yes, remember</button>
+                        <button onClick={() => setRulePrompt(null)} className="rounded-md px-2.5 py-1 text-[12px] font-semibold text-slate-500 hover:bg-white">Just this once</button>
+                      </div>
+                    </div>
+                  )}
+                  {thread.needsReview && (
+                    <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[13px] text-amber-800">
+                      <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />The AI is not confident about this one. Please confirm or change the classification.
+                    </div>
+                  )}
                 </div>
                 <div className="mt-2 flex items-center justify-between text-[13px] text-slate-400">
                   <span>Confidence</span>
@@ -250,6 +283,13 @@ export default function ConversationDynamicPage() {
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
                   <div className="h-full rounded-full bg-indigo-500" style={{ width: `${conversation.confidence}%` }} />
                 </div>
+                {overdueDays(thread) !== null && (
+                  <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-3 text-[13px] text-orange-800">
+                    <p className="font-semibold">Reply Radar</p>
+                    <p className="mt-0.5">The client hasn’t replied in {overdueDays(thread)} days.</p>
+                    <button onClick={() => notify('Nudge sent to the client (simulated)')} className="mt-2 rounded-md bg-orange-600 px-2.5 py-1 font-semibold text-white hover:bg-orange-700">Nudge client</button>
+                  </div>
+                )}
                 <div className="mt-4 rounded-lg bg-slate-50 p-3">
                   <p className="text-[13px] font-semibold text-slate-700">Why this classification?</p>
                   <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{conversation.why}</p>

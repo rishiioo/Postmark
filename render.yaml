@@ -8,11 +8,16 @@ services:
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      # Set these in the Render dashboard (Environment tab) after first deploy:
+      # Set these in the Render dashboard (Environment tab) after the first deploy:
       - key: MONGODB_URI
         sync: false
-      - key: FRONTEND_URL
+      - key: CLIENT_URL # your Vercel URL, e.g. https://postmark.vercel.app
         sync: false
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: gemini-flash-latest

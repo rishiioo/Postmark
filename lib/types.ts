@@ -28,5 +28,6 @@ export type Thread = {
   isArchived: boolean
   isCompleted: boolean
   handledBy: 'client' | 'assistant' | null
+  handledAt?: string
   lastMessageAt: string
 }

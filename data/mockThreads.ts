@@ -305,6 +305,30 @@ const threads: Thread[] = [
     handledBy: null,
     lastMessageAt: new Date(now.getTime() - 0.5 * 60 * 60 * 1000).toISOString(),
   },
+  // Thread 13: stale client approval - powers the "Reply Radar" nudge
+  {
+    id: '13',
+    subject: 'Annual support contract renewal — your sign-off needed',
+    participants: [{ name: 'Meera Iyer', email: 'meera.iyer@zensar.com' }, { name: 'Jordan Davis', email: 'jordan@postmark.in' }],
+    messages: [
+      { from: 'meera.iyer@zensar.com', to: 'jordan@postmark.in', body: 'Hi Jordan,\n\nOur annual support contract is due for renewal on 30 November. The renewed terms include a 6% price increase and a longer 24-month commitment. We need written sign-off from the client before we can issue the new agreement.\n\nRegards,\nMeera', sentAt: new Date(now.getTime() - 80 * 60 * 60 * 1000).toISOString() },
+      { from: 'meera.iyer@zensar.com', to: 'jordan@postmark.in', body: 'Hi Jordan, following up on the renewal below. Could you confirm whether the client is comfortable with the revised terms? We would like to close this before month end.', sentAt: new Date(now.getTime() - 56 * 60 * 60 * 1000).toISOString() },
+    ],
+    classification: 'Client to Reply',
+    confidence: 91,
+    reason: 'A contract renewal with a price increase needs the client’s own written approval.',
+    summary: 'Zensar wants the client’s sign-off on a support contract renewal (6% increase, 24-month term) before 30 November.',
+    deadlines: ['Sign-off needed before 30 November'],
+    segment: 'workspace',
+    needsReview: false,
+    correctedByUser: false,
+    isRead: true,
+    isImportant: true,
+    isArchived: false,
+    isCompleted: false,
+    handledBy: null,
+    lastMessageAt: new Date(now.getTime() - 56 * 60 * 60 * 1000).toISOString(),
+  },
 ]
 
 export { threads }
