@@ -16,14 +16,14 @@ export function AnimatedBackground() {
     if (!ctx) return
 
     // Initialize particles
-    const initParticles: Particle[] = Array.from({ length: 140 }, () => ({
+    const initParticles: Particle[] = Array.from({ length: 160 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * 1.8 + 0.5,
-      vx: (Math.random() - 0.5) * 0.04,
-      vy: (Math.random() - 0.5) * 0.04,
-      opacity: Math.random() * 0.5 + 0.15,
-      color: Math.random() > 0.5 ? 'rgba(99, 102, 241,' : 'rgba(14, 165, 233,',
+      radius: Math.random() * 2 + 1,
+      vx: (Math.random() - 0.5) * 0.03,
+      vy: (Math.random() - 0.5) * 0.03,
+      opacity: Math.random() * 0.6 + 0.25,
+      color: Math.random() > 0.5 ? 'rgba(120, 130, 255,' : 'rgba(100, 200, 255,',
     }))
 
     // Initialize blobs (aurora-like shapes)
@@ -210,7 +210,7 @@ export function AnimatedBackground() {
           const distSq = dx * dx + dy * dy
 
           if (distSq < maxDistSq) {
-            const opacity = (1 - distSq / maxDistSq) * 0.1
+            const opacity = (1 - distSq / maxDistSq) * 0.25
             ctx.strokeStyle = `rgba(99, 102, 241, ${opacity})`
             ctx.lineWidth = 0.5
             ctx.beginPath()

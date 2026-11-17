@@ -266,7 +266,7 @@ export default function DashboardPage() {
                           setActiveFolder(name);
                           setMobileNav(false);
                         }}
-                        className={`group flex w-full items-center gap-3 rounded-lg px-3 py-[9px] text-left text-sm transition-colors ${activeFolder === name ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"}`}
+                        className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${activeFolder === name ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"}`}
                       >
                         <Icon
                           className={`size-[15px] shrink-0 ${activeFolder === name ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"}`}
@@ -466,7 +466,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setFilter("All mail")}
-                    className={`rounded-md px-2.5 py-1.5 text-[13px] font-semibold ${filter === "All mail" ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
+                    className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-semibold ${filter === "All mail" ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
                   >
                     All mail{" "}
                     <span className="ml-1 text-xs text-slate-400">128</span>
@@ -475,7 +475,7 @@ export default function DashboardPage() {
                     onClick={() =>
                       setFilter(filter === "Unread" ? "All mail" : "Unread")
                     }
-                    className={`rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Unread" ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"}`}
+                    className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Unread" ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"}`}
                   >
                     Unread{" "}
                     <span className="ml-1 text-xs text-slate-400">12</span>
@@ -484,14 +484,14 @@ export default function DashboardPage() {
                     onClick={() =>
                       setFilter(filter === "Starred" ? "All mail" : "Starred")
                     }
-                    className={`rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Starred" ? "bg-amber-50 text-amber-700" : "text-slate-500 hover:bg-slate-50"}`}
+                    className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Starred" ? "bg-amber-50 text-amber-700" : "text-slate-500 hover:bg-slate-50"}`}
                   >
                     Starred
                   </button>
                 </div>
                 <button
                   onClick={() => setSortRecent(!sortRecent)}
-                  className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"
+                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"
                 >
                   <ArrowDownUp className="size-3" />
                   Newest first <ChevronDown className="size-3" />
@@ -531,7 +531,7 @@ export default function DashboardPage() {
                         selectedId === message.id ? null : message.id,
                       )
                     }
-                    className={`group grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-3 border-b border-slate-100/90 px-4 py-3.5 text-left transition last:border-b-0 hover:bg-slate-50/70 sm:px-5 sm:py-4 md:grid-cols-[minmax(190px,0.82fr)_minmax(240px,1.1fr)_minmax(260px,1.35fr)_minmax(140px,0.65fr)_minmax(130px,0.65fr)] md:items-center md:gap-4 ${message.unread ? "bg-indigo-50/15" : ""}`}
+                    className={`group flex w-full cursor-pointer flex-col gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 text-left transition hover:bg-slate-50/70 md:grid md:grid-cols-[minmax(190px,0.82fr)_minmax(240px,1.1fr)_minmax(260px,1.35fr)_minmax(140px,0.65fr)_minmax(130px,0.65fr)] md:items-center md:gap-4 md:border-b md:border-slate-100/90 md:rounded-none md:px-5 md:py-4 ${message.unread ? "bg-indigo-50/15" : ""}`}
                   >
                     <div className="flex min-w-0 items-center gap-2.5">
                       <div
@@ -553,7 +553,7 @@ export default function DashboardPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="col-span-2 min-w-0 pl-[42px] md:col-span-1 md:pl-0">
+                    <div className="min-w-0 md:col-span-2">
                       <p
                         className={`truncate text-[13px] ${message.unread ? "font-semibold text-slate-800" : "font-medium text-slate-700"}`}
                       >
@@ -566,7 +566,7 @@ export default function DashboardPage() {
                     <p className="hidden truncate text-xs leading-relaxed text-slate-500 md:block">
                       {message.summary}
                     </p>
-                    <div className="col-start-1 row-start-2 ml-[42px] md:col-auto md:row-auto md:ml-0">
+                    <div className="flex flex-wrap items-center gap-1.5 md:contents">
                       {(() => {
                         const { chip, dot } = classificationStyle(message.classification);
                         return (
@@ -577,15 +577,15 @@ export default function DashboardPage() {
                         );
                       })()}
                       {message.needsReview && (
-                        <span className="ml-1.5 inline-flex rounded-md bg-amber-50 px-1.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Needs review</span>
+                        <span className="inline-flex rounded-md bg-amber-50 px-1.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Needs review</span>
                       )}
                       {message.overdue ? (
-                        <span className="ml-1.5 inline-flex rounded-md bg-orange-50 px-1.5 py-1 text-[11px] font-semibold text-orange-700 ring-1 ring-inset ring-orange-200" title="Reply Radar: the client has not replied yet">Client quiet for {message.overdue} days</span>
+                        <span className="inline-flex rounded-md bg-orange-50 px-1.5 py-1 text-[11px] font-semibold text-orange-700 ring-1 ring-inset ring-orange-200" title="Reply Radar: the client has not replied yet">Client quiet for {message.overdue} days</span>
                       ) : null}
                       {message.handledBy && (
-                        <span className="ml-1.5 inline-flex rounded-md bg-emerald-50 px-1.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">Handled by {message.handledBy}{message.handledAt ? ` · ${timeAgo(message.handledAt)}` : ""}</span>
+                        <span className="inline-flex rounded-md bg-emerald-50 px-1.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">Handled by {message.handledBy}{message.handledAt ? ` · ${timeAgo(message.handledAt)}` : ""}</span>
                       )}
-                      <div className="mt-1.5 flex items-center gap-1 text-[13px] text-slate-400">
+                      <div className="flex items-center gap-1 text-[13px] text-slate-400">
                         <span className="h-[3px] w-[48px] overflow-hidden rounded-full bg-slate-100">
                           <span
                             className={`${confidenceBarStyle(message.confidence)} block h-full rounded-full`}
@@ -595,30 +595,32 @@ export default function DashboardPage() {
                         <span className="text-xs tabular-nums text-slate-500">{message.confidence}%</span>
                       </div>
                     </div>
-                    <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 self-start md:col-auto md:row-auto md:self-center">
-                      {message.starred && (
-                        <Star
-                          className="size-3 text-amber-400"
-                          fill="currentColor"
-                          strokeWidth={1.5}
-                        />
-                      )}
-                      <span className="whitespace-nowrap text-xs text-slate-400">
-                        {message.time}
-                      </span>
+                    <div className="flex flex-col items-end justify-between gap-2 self-start md:contents">
+                      <div className="flex items-center gap-2">
+                        {message.starred && (
+                          <Star
+                            className="size-3 text-amber-400"
+                            fill="currentColor"
+                            strokeWidth={1.5}
+                          />
+                        )}
+                        <span className="whitespace-nowrap text-xs text-slate-400">
+                          {message.time}
+                        </span>
+                      </div>
                       <Link
                         href={`/conversation/${message.id}`}
                         onClick={(event) => event.stopPropagation()}
-                        className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                        className="inline-flex min-h-[44px] items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
                         aria-label={`Open conversation with ${message.name}`}
                       >
                         Open
                         <ArrowUpRight className="size-3" />
                       </Link>
-                      <MoreHorizontal className="hidden size-4 text-slate-300 group-hover:block" />
+                      <MoreHorizontal className="hidden size-4 text-slate-300 group-hover:block md:hidden" />
                     </div>
                     {selectedId === message.id && (
-                      <div className="col-span-2 rounded-lg border border-indigo-100 bg-indigo-50/60 p-3 text-[13px] text-slate-600 md:col-span-5 md:ml-0">
+                      <div className="rounded-lg border border-indigo-100 bg-indigo-50/60 p-3 text-[13px] text-slate-600 md:col-span-5 md:ml-0">
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-indigo-700">
                             Message preview
