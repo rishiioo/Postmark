@@ -79,6 +79,20 @@ function toMessage(thread: Thread): Message {
     .toUpperCase()
     .slice(0, 2);
 
+  // Generate consistent color based on sender email
+  const colorHash = senderEmail.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colors = [
+    'bg-indigo-100 text-indigo-700',
+    'bg-emerald-100 text-emerald-700',
+    'bg-amber-100 text-amber-700',
+    'bg-rose-100 text-rose-700',
+    'bg-violet-100 text-violet-700',
+    'bg-cyan-100 text-cyan-700',
+    'bg-orange-100 text-orange-700',
+    'bg-pink-100 text-pink-700',
+  ];
+  const color = colors[colorHash % colors.length];
+
   return {
     id: thread.id,
     name: senderName,
@@ -90,6 +104,7 @@ function toMessage(thread: Thread): Message {
     segment: thread.segment,
     confidence: thread.confidence,
     initials,
+    color,
     unread: !thread.isRead,
     starred: thread.isImportant,
     archived: thread.isArchived,

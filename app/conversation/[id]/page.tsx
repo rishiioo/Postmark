@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useThread } from '@/lib/store'
 import { overdueDays } from '@/lib/radar'
 import { classificationStyle, confidenceBarStyle } from '@/lib/classification'
