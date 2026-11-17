@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useThread } from '@/lib/store'
 import { overdueDays } from '@/lib/radar'
+import { classificationStyle, confidenceBarStyle } from '@/lib/classification'
 import type { Thread } from '@/lib/types'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -29,9 +30,6 @@ type ConversationData = {
   suggestedDraft: string
 }
 
-const labels = ['Assistant to Reply', 'Client to Reply', 'Action Required', 'Meetings', 'Important', 'No Reply Needed', 'Waiting for Response']
-const palette = ['bg-indigo-100 text-indigo-700', 'bg-rose-100 text-rose-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-violet-100 text-violet-700']
-
 function toConversation(t: Thread): ConversationData {
   return {
     id: t.id,
@@ -51,7 +49,7 @@ function toConversation(t: Thread): ConversationData {
         name,
         email: m.from,
         initials: name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase(),
-        avatarColor: palette[(name.charCodeAt(0) || 0) % palette.length],
+        avatarColor: 'bg-indigo-100 text-indigo-700',
         time: d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }),
         recipient: `To ${recipient}`,
         content: m.body,
@@ -251,14 +249,29 @@ export default function ConversationDynamicPage() {
                 <p className="mt-4 text-[13px] font-semibold uppercase tracking-[.12em] text-slate-400">Summary</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{conversation.summary}</p>
                 <p className="mt-4 text-[13px] font-semibold uppercase tracking-[.12em] text-slate-400">Classification</p>
-                <div className="mt-2">
+                <div className="mt-2 flex items-center gap-2">
+                  {(() => {
+                    const { chip, dot } = classificationStyle(classification);
+                    return (
+                      <span className={chip}>
+                        <span className={dot} aria-hidden="true" />
+                        {classification}
+                      </span>
+                    );
+                  })()}
                   <select
                     aria-label="Change classification"
                     value={classification}
                     onChange={(event) => changeClassification(event.target.value)}
                     className="h-9 w-full rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-semibold text-indigo-700 outline-none focus:border-indigo-300"
                   >
-                    {labels.map((label) => <option key={label}>{label}</option>)}
+                    <option>Assistant to Reply</option>
+                    <option>Client to Reply</option>
+                    <option>Action Required</option>
+                    <option>Meetings</option>
+                    <option>Important</option>
+                    <option>No Reply Needed</option>
+                    <option>Waiting for Response</option>
                   </select>
                   {thread.correctedByUser && <p className="mt-1.5 text-[12px] font-semibold text-emerald-600">Corrected by you</p>}
                   {rulePrompt && (
@@ -280,8 +293,8 @@ export default function ConversationDynamicPage() {
                   <span>Confidence</span>
                   <span className="font-semibold text-slate-600">{conversation.confidence}%</span>
                 </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                  <div className="h-full rounded-full bg-indigo-500" style={{ width: `${conversation.confidence}%` }} />
+                <div className="mt-1.5 h-[3px] overflow-hidden rounded-full bg-slate-100">
+                  <div className={`${confidenceBarStyle(conversation.confidence)} h-full rounded-full`} style={{ width: `${conversation.confidence}%` }} />
                 </div>
                 {overdueDays(thread) !== null && (
                   <div className="mt-4 rounded-lg border border-orange-200 bg-orange-50 p-3 text-[13px] text-orange-800">

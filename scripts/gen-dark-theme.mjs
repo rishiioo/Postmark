@@ -3,14 +3,14 @@
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const ROOTS = ['app', 'components']
+const ROOTS = ['app', 'components', 'lib']
 const SKIP = ['app/onboarding'] // the login flow is already dark-only
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
     const p = join(dir, name)
     if (statSync(p).isDirectory()) walk(p, out)
-    else if (p.endsWith('.tsx')) out.push(p)
+    else if (p.endsWith('.tsx') || p.endsWith('.ts')) out.push(p)
   }
   return out
 }
@@ -18,6 +18,7 @@ function walk(dir, out = []) {
 const RGB = {
   indigo: '99,102,241', emerald: '16,185,129', amber: '245,158,11', rose: '244,63,94',
   sky: '14,165,233', violet: '139,92,246', orange: '249,115,22', pink: '236,72,153',
+  fuchsia: '232,19,139',
 }
 const LIGHT = {
   indigo: { 100: '#e0e7ff', 300: '#a5b4fc', 400: '#818cf8' },
@@ -28,6 +29,7 @@ const LIGHT = {
   violet: { 300: '#c4b5fd', 400: '#a78bfa' },
   orange: { 300: '#fdba74', 400: '#fb923c' },
   pink: { 300: '#f9a8d4', 400: '#f472b6' },
+  fuchsia: { 300: '#f9a8d4', 400: '#f472b6' },
 }
 const SLATE_BG = { 50: '#16161a', 100: '#1c1c21', 200: '#27272d', 900: '#2b2b32' }
 const SLATE_TEXT = { 900: '#fafafa', 800: '#f4f4f5', 700: '#e4e4e7', 600: '#d4d4d8', 500: '#a1a1aa', 400: '#8e8e98', 300: '#6b6b75' }

@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { apiConfigured, useThreads } from "@/lib/store";
 import { overdueDays, timeAgo } from "@/lib/radar";
+import { classificationStyle, confidenceBarStyle } from "@/lib/classification";
 import type { Thread } from "@/lib/types";
 
 type Message = {
@@ -78,16 +79,6 @@ function toMessage(thread: Thread): Message {
     .toUpperCase()
     .slice(0, 2);
 
-  const colorMap: Record<string, string> = {
-    "Assistant to Reply": "bg-rose-100 text-rose-700",
-    "Action Required": "bg-amber-100 text-amber-700",
-    "Client to Reply": "bg-violet-100 text-violet-700",
-    "No Reply Needed": "bg-sky-100 text-sky-700",
-    Meetings: "bg-emerald-100 text-emerald-700",
-    "Waiting for Response": "bg-pink-100 text-pink-700",
-    Important: "bg-indigo-100 text-indigo-700",
-  };
-
   return {
     id: thread.id,
     name: senderName,
@@ -99,7 +90,6 @@ function toMessage(thread: Thread): Message {
     segment: thread.segment,
     confidence: thread.confidence,
     initials,
-    color: colorMap[thread.classification] || "bg-slate-100 text-slate-700",
     unread: !thread.isRead,
     starred: thread.isImportant,
     archived: thread.isArchived,
@@ -144,21 +134,6 @@ function buildStats(messages: Message[]) {
     { label: "Needs action", value: String(action), change: review ? `${review} flagged for review` : "AI is confident", icon: ListFilter, tone: "text-amber-600", mark: "bg-amber-50" },
     { label: "Client attention", value: String(client), change: client ? (live.some((m) => m.overdue) ? `${live.filter((m) => m.overdue).length} overdue — nudge them` : "Waiting on the client") : "All handled", icon: Bell, tone: "text-emerald-600", mark: "bg-emerald-50" },
   ];
-}
-function classificationColor(category: string) {
-  if (category === "Assistant to Reply")
-    return "bg-indigo-50 text-indigo-700 ring-indigo-100";
-  if (category === "Client to Reply")
-    return "bg-violet-50 text-violet-700 ring-violet-100";
-  if (category === "Action Required")
-    return "bg-amber-50 text-amber-700 ring-amber-100";
-  if (category === "Meetings")
-    return "bg-emerald-50 text-emerald-700 ring-emerald-100";
-  if (category === "No Reply Needed")
-    return "bg-slate-100 text-slate-600 ring-slate-200";
-  if (category === "Waiting for Response")
-    return "bg-sky-50 text-sky-700 ring-sky-100";
-  return "bg-rose-50 text-rose-700 ring-rose-100";
 }
 
 export default function DashboardPage() {
@@ -592,11 +567,15 @@ export default function DashboardPage() {
                       {message.summary}
                     </p>
                     <div className="col-start-1 row-start-2 ml-[42px] md:col-auto md:row-auto md:ml-0">
-                      <span
-                        className={`inline-flex whitespace-nowrap rounded-md px-2 py-1 text-[13px] font-semibold ring-1 ring-inset ${classificationColor(message.classification)}`}
-                      >
-                        {message.classification}
-                      </span>
+                      {(() => {
+                        const { chip, dot } = classificationStyle(message.classification);
+                        return (
+                          <span className={chip}>
+                            <span className={dot} aria-hidden="true" />
+                            {message.classification}
+                          </span>
+                        );
+                      })()}
                       {message.needsReview && (
                         <span className="ml-1.5 inline-flex rounded-md bg-amber-50 px-1.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Needs review</span>
                       )}
@@ -607,13 +586,13 @@ export default function DashboardPage() {
                         <span className="ml-1.5 inline-flex rounded-md bg-emerald-50 px-1.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">Handled by {message.handledBy}{message.handledAt ? ` · ${timeAgo(message.handledAt)}` : ""}</span>
                       )}
                       <div className="mt-1.5 flex items-center gap-1 text-[13px] text-slate-400">
-                        <span className="h-1 w-[42px] overflow-hidden rounded-full bg-slate-100">
+                        <span className="h-[3px] w-[48px] overflow-hidden rounded-full bg-slate-100">
                           <span
-                            className="block h-full rounded-full bg-indigo-400"
+                            className={`${confidenceBarStyle(message.confidence)} block h-full rounded-full`}
                             style={{ width: `${message.confidence}%` }}
                           />
                         </span>
-                        <span>{message.confidence}%</span>
+                        <span className="text-xs tabular-nums text-slate-500">{message.confidence}%</span>
                       </div>
                     </div>
                     <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 self-start md:col-auto md:row-auto md:self-center">
