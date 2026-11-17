@@ -206,7 +206,7 @@ export default function ConversationDynamicPage() {
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
                     rows={5}
-                    placeholder="Click “Generate AI draft", or write your own reply. Nothing is sent until you approve."
+                    placeholder="Click "Generate AI draft", or write your own reply. Nothing is sent until you approve."
                     className="w-full resize-y border-0 px-4 py-3 text-base sm:text-xs leading-[1.8] text-slate-600 outline-none focus:ring-0"
                   />
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
@@ -273,22 +273,22 @@ export default function ConversationDynamicPage() {
                     <option>No Reply Needed</option>
                     <option>Waiting for Response</option>
                   </select>
-                  {thread.correctedByUser && <p className="mt-1.5 text-[12px] font-semibold text-emerald-600">Corrected by you</p>}
-                  {rulePrompt && (
-                    <div className="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/60 p-2.5 text-[13px] text-indigo-900">
-                      Always treat emails from {otherParty.name} as <strong>{rulePrompt}</strong>?
-                      <div className="mt-2 flex gap-2">
-                        <button onClick={() => { saveRule(otherParty.email, rulePrompt).catch(() => {}); setRulePrompt(null); notify('Rule saved for this sender') }} className="rounded-md bg-indigo-600 px-2.5 py-1 text-[12px] font-semibold text-white">Yes, remember</button>
-                        <button onClick={() => setRulePrompt(null)} className="rounded-md px-2.5 py-1 text-[12px] font-semibold text-slate-500 hover:bg-white">Just this once</button>
-                      </div>
-                    </div>
-                  )}
-                  {thread.needsReview && (
-                    <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[13px] text-amber-800">
-                      <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />The AI is not confident about this one. Please confirm or change the classification.
-                    </div>
-                  )}
                 </div>
+                {thread.correctedByUser && <p className="mt-1.5 text-[12px] font-semibold text-emerald-600">Corrected by you</p>}
+                {rulePrompt && (
+                  <div className="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/60 p-2.5 text-[13px] text-indigo-900">
+                    Always treat emails from {otherParty.name} as <strong>{rulePrompt}</strong>?
+                    <div className="mt-2 flex gap-2">
+                      <button onClick={() => { saveRule(otherParty.email, rulePrompt).catch(() => {}); setRulePrompt(null); notify('Rule saved for this sender') }} className="rounded-md bg-indigo-600 px-2.5 py-1 text-[12px] font-semibold text-white">Yes, remember</button>
+                      <button onClick={() => setRulePrompt(null)} className="rounded-md px-2.5 py-1 text-[12px] font-semibold text-slate-500 hover:bg-white">Just this once</button>
+                    </div>
+                  </div>
+                )}
+                {thread.needsReview && (
+                  <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-[13px] text-amber-800">
+                    <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />The AI is not confident about this one. Please confirm or change the classification.
+                  </div>
+                )}
                 <div className="mt-2 flex items-center justify-between text-[13px] text-slate-400">
                   <span>Confidence</span>
                   <span className="font-semibold text-slate-600">{conversation.confidence}%</span>
