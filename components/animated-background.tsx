@@ -15,6 +15,14 @@ export function AnimatedBackground() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    function resize() {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      canvas.style.width = window.innerWidth + 'px'
+      canvas.style.height = window.innerHeight + 'px'
+    }
+    resize()
+
     // Initialize particles
     const initParticles: Particle[] = Array.from({ length: 160 }, () => ({
       x: Math.random() * canvas.width,
@@ -58,14 +66,6 @@ export function AnimatedBackground() {
     setBlobs(initBlobs)
 
     let lastTime = 0
-
-    function resize() {
-      const dpr = window.devicePixelRatio || 1
-      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth
-      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight
-      canvas.style.width = '100%'
-      canvas.style.height = '100%'
-    }
 
     function animate(time: number) {
       const dt = time - lastTime

@@ -202,12 +202,12 @@ export default function ConversationDynamicPage() {
               ) : (
                 <>
                   <textarea
-                    aria-label=”Draft reply text”
+                    aria-label="Draft reply text"
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
                     rows={5}
-                    placeholder=”Click “Generate AI draft”, or write your own reply. Nothing is sent until you approve.”
-                    className=”w-full resize-y border-0 px-4 py-3 text-base sm:text-xs leading-[1.8] text-slate-600 outline-none focus:ring-0”
+                    placeholder="Click “Generate AI draft", or write your own reply. Nothing is sent until you approve."
+                    className="w-full resize-y border-0 px-4 py-3 text-base sm:text-xs leading-[1.8] text-slate-600 outline-none focus:ring-0"
                   />
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
                     <p className="flex items-center gap-1.5 text-[13px] text-slate-400">
