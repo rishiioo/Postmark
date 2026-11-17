@@ -136,29 +136,29 @@ export default function OnboardingPage() {
           <section className="rounded-2xl border border-white/10 bg-[#111113] p-5 shadow-[0_8px_40px_rgba(0,0,0,.5)] sm:p-8 animate-fade-in-up animation-delay-200">
             <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-indigo-400 animate-fade-in-up animation-delay-300">Step 3 of 3</p>
             <div className="mt-2 flex items-center gap-2 animate-fade-in-up animation-delay-400">
-              <h1 className="text-[23px] font-semibold tracking-[-.05em]">{done ? "You’re all set" : failed ? ‘Sync needs attention’ : ‘Getting your inbox ready’}</h1>
+              <h1 className="text-[23px] font-semibold tracking-[-.05em]">{done ? "You're all set" : failed ? 'Sync needs attention' : 'Getting your inbox ready'}</h1>
               {!failed && !done && <LoaderCircle className="size-4 animate-spin text-indigo-400" />}
             </div>
-            <p className="mt-2 text-xs leading-relaxed text-zinc-400 animate-fade-in animation-delay-500">{failed ? `We couldn’t finish connecting to ${provider}. Check your connection and try again.` : done ? "Your inbox is connected and ready for a fresh start." : `Connecting ${provider} and organizing your messages.`}</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-400 animate-fade-in animation-delay-500">{failed ? `We couldn't finish connecting to ${provider}. Check your connection and try again.` : done ? "Your inbox is connected and ready for a fresh start." : `Connecting ${provider} and organizing your messages.`}</p>
             <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10 animate-scale-in animation-delay-600">
-              <div className={`h-full rounded-full transition-all duration-700 ${failed ? ‘w-[55%] bg-rose-500/150’ : done ? ‘w-full bg-emerald-500’ : stage === 0 ? ‘w-[30%] bg-indigo-500’ : ‘w-[70%] animate-pulse bg-indigo-500’}`} />
+              <div className={`h-full rounded-full transition-all duration-700 ${failed ? 'w-[55%] bg-rose-500/150' : done ? 'w-full bg-emerald-500' : stage === 0 ? 'w-[30%] bg-indigo-500' : 'w-[70%] animate-pulse bg-indigo-500'}`} />
             </div>
             <ul className="mt-6 space-y-4 animate-fade-in-up animation-delay-700">
-              {[‘Fetching emails’, ‘AI is classifying conversations’, ‘Done’].map((label, index) => {
+              {['Fetching emails', 'AI is classifying conversations', 'Done'].map((label, index) => {
                 const complete = done || index < stage;
                 const current = !failed && !done && index === stage;
                 return (
                   <li key={label} className="flex items-center gap-3 text-xs animate-slide-in-right" style={{animationDelay: `${700 + index * 100}ms`}}>
-                    <span className={`grid size-5 place-items-center rounded-full ${complete ? ‘bg-emerald-500/15 text-emerald-400’ : current ? ‘bg-indigo-500/15 text-indigo-400’ : ‘bg-white/10 text-zinc-500’}`}>
+                    <span className={`grid size-5 place-items-center rounded-full ${complete ? 'bg-emerald-500/15 text-emerald-400' : current ? 'bg-indigo-500/15 text-indigo-400' : 'bg-white/10 text-zinc-500'}`}>
                       {complete ? <Check className="size-3" /> : current ? <LoaderCircle className="size-3 animate-spin" /> : <span className="size-1 rounded-full bg-current" />}
                     </span>
-                    <span className={complete || current ? ‘font-medium text-zinc-200’ : ‘text-zinc-500’}>{label}</span>
+                    <span className={complete || current ? 'font-medium text-zinc-200' : 'text-zinc-500'}> {label}</span>
                     {failed && index === stage && <span className="ml-auto text-[13px] font-medium text-rose-400">Connection failed</span>}
                   </li>
                 )
               })}
             </ul>
-            <div className="mt-7 animate-fade-in-up animation-delay-700" style={{animationDelay: ‘1000ms’}}>
+            <div className="mt-7 animate-fade-in-up animation-delay-700" style={{animationDelay: '1000ms'}}>
               {failed ? (
                 <button onClick={startSync} className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-indigo-500 text-xs font-semibold text-white hover:bg-indigo-400">Retry connection <ArrowRight className="size-3.5" /></button>
               ) : done ? (

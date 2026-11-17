@@ -1,3 +1,4 @@
+import dns from 'node:dns';
 import dotenv from 'dotenv';
 
 // Loads backend/.env.local first (what you were using), then backend/.env. Real environment variables always win.
@@ -17,3 +18,10 @@ export const config = {
     baseUrl: process.env.LLM_BASE_URL || 'https://api.groq.com/openai/v1',
   },
 };
+
+// Some networks/ISPs block SRV lookups for Atlas (mongodb+srv://) and fail with `querySrv ECONNREFUSED`.
+// Using public DNS fixes it. This lives here so the server AND the seed script both get it.
+// Set USE_CUSTOM_DNS=false to turn it off.
+if (process.env.USE_CUSTOM_DNS !== 'false' && String(config.mongodbUri || '').startsWith('mongodb+srv://')) {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+}

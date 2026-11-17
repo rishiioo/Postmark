@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | null>(null)
   const [particles, setParticles] = useState<Particle[]>([])
   const [blobs, setBlobs] = useState<Blob[]>([])
 
@@ -20,8 +20,8 @@ export function AnimatedBackground() {
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       radius: Math.random() * 1.5 + 0.5,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
+      vx: (Math.random() - 0.5) * 0.05,
+      vy: (Math.random() - 0.5) * 0.05,
       opacity: Math.random() * 0.4 + 0.1,
       color: Math.random() > 0.5 ? 'rgba(99, 102, 241,' : 'rgba(14, 165, 233,',
     }))
@@ -33,7 +33,7 @@ export function AnimatedBackground() {
         y: canvas.height * 0.1,
         radius: canvas.width * 0.4,
         hue: 250, // indigo
-        speed: 0.008,
+        speed: 0.0008,
         angle: 0,
       },
       {
@@ -41,7 +41,7 @@ export function AnimatedBackground() {
         y: canvas.height * 0.2,
         radius: canvas.width * 0.35,
         hue: 190, // cyan/sky
-        speed: 0.006,
+        speed: 0.0006,
         angle: Math.PI,
       },
       {
@@ -49,7 +49,7 @@ export function AnimatedBackground() {
         y: canvas.height * 0.8,
         radius: canvas.width * 0.3,
         hue: 280, // violet
-        speed: 0.01,
+        speed: 0.001,
         angle: Math.PI / 2,
       },
     ]
@@ -82,7 +82,7 @@ export function AnimatedBackground() {
       drawBlobs(ctx, initBlobs, canvas.width, canvas.height, dt)
 
       // Draw particles
-      drawParticles(ctx, initParticles, canvas.width, canvas.height, dt)
+      drawParticles(ctx, initParticles, canvas.width, canvas.height, dt, time)
 
       // Draw connections between nearby particles
       drawConnections(ctx, initParticles, canvas.width, canvas.height)
@@ -97,7 +97,7 @@ export function AnimatedBackground() {
       time: number
     ) {
       const gridSize = 60
-      const offset = (time * 0.01) % gridSize
+      const offset = (time * 0.001) % gridSize
 
       ctx.strokeStyle = 'rgba(99, 102, 241, 0.03)'
       ctx.lineWidth = 0.5
@@ -153,8 +153,8 @@ export function AnimatedBackground() {
         ctx.ellipse(
           cx,
           cy,
-          blob.radius * (1 + Math.sin(blob.angle * 0.5) * 0.15),
-          blob.radius * (1 + Math.cos(blob.angle * 0.3) * 0.15),
+          blob.radius * (1 + Math.sin(blob.angle * 0.05) * 0.15),
+          blob.radius * (1 + Math.cos(blob.angle * 0.03) * 0.15),
           Math.sin(blob.angle) * 0.3,
           0,
           Math.PI * 2
@@ -168,7 +168,8 @@ export function AnimatedBackground() {
       particles: Particle[],
       width: number,
       height: number,
-      dt: number
+      dt: number,
+      time: number
     ) {
       particles.forEach((p) => {
         // Update position
@@ -176,8 +177,8 @@ export function AnimatedBackground() {
         p.y += p.vy * dt * 0.02
 
         // Add subtle wave motion
-        p.x += Math.sin(p.y * 0.01 + time * 0.001) * 0.05
-        p.y += Math.cos(p.x * 0.01 + time * 0.001) * 0.05
+        p.x += Math.sin(p.y * 0.01 + time * 0.0001) * 0.02
+        p.y += Math.cos(p.x * 0.01 + time * 0.0001) * 0.02
 
         // Wrap around edges
         if (p.x < -10) p.x = width + 10
