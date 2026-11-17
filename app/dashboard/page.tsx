@@ -160,7 +160,7 @@ export default function DashboardPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const [sortRecent, setSortRecent] = useState(true);
   const [toast, setToast] = useState("");
-  const { threads, error, mode, loading, refresh, simulateEmail } = useThreads();
+  const { threads, error, mode, loading, refresh, simulateEmail, updateThread } = useThreads();
   const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -567,11 +567,14 @@ export default function DashboardPage() {
                   <div
                     role="listitem"
                     key={message.id}
-                    onClick={() =>
+                    onClick={() => {
                       setSelectedId(
                         selectedId === message.id ? null : message.id,
-                      )
-                    }
+                      );
+                      if (message.unread) {
+                        updateThread(message.id, { isRead: true });
+                      }
+                    }}
                     className={`group flex w-full cursor-pointer flex-col gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 text-left transition hover:bg-slate-50/70 md:grid md:grid-cols-[minmax(190px,0.82fr)_minmax(240px,1.1fr)_minmax(260px,1.35fr)_minmax(140px,0.65fr)_minmax(130px,0.65fr)] md:items-center md:gap-4 md:border-b md:border-slate-100/90 md:rounded-none md:px-5 md:py-4 ${message.unread ? "bg-indigo-50/15" : ""}`}
                   >
                     <div className="flex min-w-0 items-center gap-2.5">
