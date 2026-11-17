@@ -432,6 +432,7 @@ export default function DashboardPage() {
                   setQuery("");
                   setFilter("All mail");
                   setActiveFolder("Inbox");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 className="inline-flex h-9 items-center gap-2 rounded-lg bg-indigo-600 px-3.5 text-[13px] font-semibold text-white shadow-sm shadow-indigo-200/70 transition hover:bg-indigo-700"
               >
@@ -505,7 +506,21 @@ export default function DashboardPage() {
                     }
                     className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Starred" ? "bg-amber-50 text-amber-700" : "text-slate-500 hover:bg-slate-50"}`}
                   >
-                    Starred
+                    Starred{" "}
+                    <span className="ml-1 text-xs text-slate-400">
+                      {messages.filter((m) => !m.archived && m.starred).length}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      setFilter(filter === "Needs review" ? "All mail" : "Needs review")
+                    }
+                    className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Needs review" ? "bg-rose-50 text-rose-700" : "text-slate-500 hover:bg-slate-50"}`}
+                  >
+                    Needs review{" "}
+                    <span className="ml-1 text-xs text-slate-400">
+                      {messages.filter((m) => !m.archived && m.needsReview).length}
+                    </span>
                   </button>
                 </div>
                 <button
@@ -536,8 +551,15 @@ export default function DashboardPage() {
               )}
               {shownMessages.length === 0 && !(loading && apiConfigured) && (
                 <div className="px-6 py-16 text-center">
-                  <p className="text-sm font-semibold text-slate-700">Nothing here yet</p>
-                  <p className="mt-1 text-[13px] text-slate-500">No conversations match this view. Try another folder or clear the search.</p>
+                  <div className="mx-auto grid size-12 place-items-center rounded-xl bg-slate-100">
+                    <Inbox className="size-5 text-slate-400" />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold text-slate-700">Nothing here yet</p>
+                  <p className="mt-1 text-[13px] text-slate-500">
+                    {activeFolder === "Inbox" && !query && filter === "All mail"
+                      ? "Your inbox is empty. Click 'Simulate new email' to add a sample email."
+                      : "No conversations match this view. Try another folder or clear the search."}
+                  </p>
                 </div>
               )}
               <div role="list" aria-label="Email messages">

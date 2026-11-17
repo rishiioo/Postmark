@@ -91,9 +91,26 @@ export default function ConversationDynamicPage() {
     return (
       <main className="grid min-h-screen place-items-center bg-[#f7f8fa] px-4 text-center text-slate-900">
         <div>
-          <p className="text-sm font-semibold">{loading ? 'Loading conversation…' : 'Conversation not found'}</p>
-          {!loading && <p className="mt-1 text-[13px] text-slate-500">It may have been removed or the link is incorrect.</p>}
-          <Link href="/dashboard" className="mt-4 inline-flex text-[13px] font-semibold text-indigo-600">Back to inbox</Link>
+          {loading ? (
+            <>
+              <div className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-indigo-50">
+                <Sparkles className="size-4 text-indigo-500 animate-pulse" />
+              </div>
+              <p className="text-sm font-semibold text-slate-700">Loading conversation…</p>
+              <p className="mt-1 text-[13px] text-slate-500">AI is preparing your summary</p>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-slate-100">
+                <Mail className="size-4 text-slate-400" />
+              </div>
+              <p className="text-sm font-semibold text-slate-700">Conversation not found</p>
+              <p className="mt-1 text-[13px] text-slate-500">It may have been removed or the link is incorrect.</p>
+            </>
+          )}
+          <Link href="/dashboard" className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-indigo-600 hover:text-indigo-700">
+            <ArrowLeft className="size-3.5" />Back to inbox
+          </Link>
         </div>
       </main>
     )

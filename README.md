@@ -2,7 +2,9 @@
 
 A prototype for the **AI Full-Stack Engineer Intern** assignment. Postmark helps a personal assistant manage a client's inbox and uses AI to decide **who needs to reply**. A separate, minimal view shows the client only what needs *their* personal attention.
 
-**Stack:** Next.js (React, Tailwind, shadcn/ui) · Node.js + Express · MongoDB (Mongoose) · Gemini API (any OpenAI-compatible API also works)
+**Stack:** Next.js 16 (React 19, Tailwind, shadcn/ui) · Node.js + Express · MongoDB (Mongoose) · Gemini API (any OpenAI-compatible API also works)
+
+> 🎯 **Interview demo:** Start backend (`cd backend && npm start`), then frontend (`npm run dev`). Visit `http://localhost:3000` → Onboarding → Dashboard. Say *"Simulate new email"* to watch the AI classify live.
 
 ## What works
 
