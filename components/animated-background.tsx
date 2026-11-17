@@ -16,38 +16,38 @@ export function AnimatedBackground() {
     if (!ctx) return
 
     // Initialize particles
-    const initParticles: Particle[] = Array.from({ length: 60 }, () => ({
+    const initParticles: Particle[] = Array.from({ length: 140 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * 1.5 + 0.5,
-      vx: (Math.random() - 0.5) * 0.05,
-      vy: (Math.random() - 0.5) * 0.05,
-      opacity: Math.random() * 0.4 + 0.1,
+      radius: Math.random() * 1.8 + 0.5,
+      vx: (Math.random() - 0.5) * 0.04,
+      vy: (Math.random() - 0.5) * 0.04,
+      opacity: Math.random() * 0.5 + 0.15,
       color: Math.random() > 0.5 ? 'rgba(99, 102, 241,' : 'rgba(14, 165, 233,',
     }))
 
     // Initialize blobs (aurora-like shapes)
     const initBlobs: Blob[] = [
       {
-        x: canvas.width * 0.2,
-        y: canvas.height * 0.1,
-        radius: canvas.width * 0.4,
+        x: canvas.width * 0.15,
+        y: canvas.height * 0.15,
+        radius: canvas.width * 0.5,
         hue: 250, // indigo
         speed: 0.0008,
         angle: 0,
       },
       {
-        x: canvas.width * 0.8,
-        y: canvas.height * 0.2,
-        radius: canvas.width * 0.35,
+        x: canvas.width * 0.85,
+        y: canvas.height * 0.25,
+        radius: canvas.width * 0.45,
         hue: 190, // cyan/sky
         speed: 0.0006,
         angle: Math.PI,
       },
       {
         x: canvas.width * 0.5,
-        y: canvas.height * 0.8,
-        radius: canvas.width * 0.3,
+        y: canvas.height * 0.85,
+        radius: canvas.width * 0.4,
         hue: 280, // violet
         speed: 0.001,
         angle: Math.PI / 2,
@@ -144,8 +144,8 @@ export function AnimatedBackground() {
           cy,
           blob.radius
         )
-        gradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, 0.08)`)
-        gradient.addColorStop(0.3, `hsla(${blob.hue}, 70%, 50%, 0.04)`)
+        gradient.addColorStop(0, `hsla(${blob.hue}, 70%, 60%, 0.15)`)
+        gradient.addColorStop(0.3, `hsla(${blob.hue}, 70%, 50%, 0.08)`)
         gradient.addColorStop(1, `hsla(${blob.hue}, 70%, 40%, 0)`)
 
         ctx.fillStyle = gradient
@@ -200,7 +200,7 @@ export function AnimatedBackground() {
       width: number,
       height: number
     ) {
-      const maxDist = 120
+      const maxDist = 180
       const maxDistSq = maxDist * maxDist
 
       for (let i = 0; i < particles.length; i++) {
