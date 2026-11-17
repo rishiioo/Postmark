@@ -313,7 +313,7 @@ export default function DashboardPage() {
         </aside>
 
         <section className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-10 flex h-[70px] items-center gap-3 border-b border-slate-200/80 bg-white/90 px-4 backdrop-blur-md sm:px-7 lg:px-9">
+          <header className="sticky top-0 z-10 flex h-[70px] items-center gap-2 border-b border-slate-200/80 bg-white/90 px-3 backdrop-blur-md sm:gap-3 sm:px-7 lg:px-9">
             <button
               aria-label="Open navigation"
               onClick={() => setMobileNav(true)}
@@ -322,23 +322,23 @@ export default function DashboardPage() {
               <Menu className="size-4" />
             </button>
             <div className="relative flex min-w-0 flex-1 items-center sm:max-w-[440px]">
-              <Search className="pointer-events-none absolute left-3.5 size-4 text-slate-400" />
+              <Search className="pointer-events-none absolute left-3 size-4 text-slate-400 sm:left-3.5" />
               <input
                 ref={searchRef}
                 aria-label="Search email"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search emails, people, or keywords..."
-                className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-10 pr-14 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50"
+                placeholder="Search emails..."
+                className="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50 sm:h-10 sm:pl-10 sm:pr-14"
               />
-              <kbd className="absolute right-2.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-400 shadow-[0_1px_1px_rgba(15,23,42,0.04)]">
+              <kbd className="absolute right-2.5 hidden rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-400 shadow-[0_1px_1px_rgba(15,23,42,0.04)] sm:inline-block">
                 ⌘ K
               </kbd>
             </div>
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={handleSimulate}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-[13px] font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                className="hidden h-9 items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 text-[13px] font-semibold text-indigo-700 transition hover:bg-indigo-100 sm:inline-flex"
               >
                 <Sparkles className="size-3.5" />
                 <span className="hidden md:inline">Simulate new email</span>
@@ -346,7 +346,7 @@ export default function DashboardPage() {
               </button>
               <Link
                 href="/client"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 sm:px-3"
+                className="hidden h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 sm:inline-flex sm:px-3"
               >
                 <UserRound className="size-3.5 text-slate-400" />
                 <span className="hidden sm:inline">Switch to client view</span>
@@ -364,13 +364,13 @@ export default function DashboardPage() {
                           : "All mail",
                   )
                 }
-                className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[13px] font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 sm:gap-2 sm:px-3"
               >
                 <ListFilter className="size-3.5 text-slate-400" />
                 <span className="hidden sm:inline">
                   {filter === "All mail" ? "Filters" : filter}
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[13px] text-slate-500 sm:hidden">
+                <span className="text-xs text-slate-600 sm:hidden">
                   {filter === "All mail" ? "Filter" : filter}
                 </span>
                 <ChevronDown className="hidden size-3 text-slate-400 sm:block" />
@@ -379,19 +379,19 @@ export default function DashboardPage() {
               <button
                 onClick={() => setChatOpen(true)}
                 aria-label="Ask your inbox"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-indigo-100 bg-indigo-50/70 px-2.5 text-xs font-semibold text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-50 sm:px-3"
+                className="grid size-9 shrink-0 place-items-center rounded-lg border border-indigo-100 bg-indigo-50/70 text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-50 sm:inline-flex sm:h-9 sm:w-auto sm:gap-1.5 sm:px-3 sm:text-xs sm:font-semibold"
               >
                 <Sparkles className="size-3.5" />
                 <span className="hidden sm:inline">Ask inbox</span>
               </button>
               <button
                 aria-label="Notifications"
-                className="relative grid size-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100"
+                className="relative hidden size-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 sm:grid"
               >
                 <Bell className="size-[17px]" />
                 <span className="absolute right-[9px] top-[8px] size-1.5 rounded-full bg-indigo-500 ring-2 ring-white" />
               </button>
-              <div className="ml-1 grid size-8 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 ring-2 ring-white">
+              <div className="ml-1 grid size-8 shrink-0 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 ring-2 ring-white">
                 JD
               </div>
             </div>
