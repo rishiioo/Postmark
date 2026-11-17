@@ -73,9 +73,13 @@ export default function ConversationDynamicPage() {
   const [sent, setSent] = useState(false)
   const [rulePrompt, setRulePrompt] = useState<string | null>(null)
   const [notice, setNotice] = useState('')
+  const markedReadRef = useRef(false)
 
   useEffect(() => {
-    if (thread && !thread.isRead) updateThread(thread.id, { isRead: true })
+    if (thread && !thread.isRead && !markedReadRef.current) {
+      markedReadRef.current = true
+      updateThread(thread.id, { isRead: true })
+    }
   }, [thread, updateThread])
 
   function notify(message: string) {

@@ -469,7 +469,9 @@ export default function DashboardPage() {
                     className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-semibold ${filter === "All mail" ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
                   >
                     All mail{" "}
-                    <span className="ml-1 text-xs text-slate-400">128</span>
+                    <span className="ml-1 text-xs text-slate-400">
+                      {messages.filter((m) => !m.archived).length}
+                    </span>
                   </button>
                   <button
                     onClick={() =>
@@ -478,7 +480,9 @@ export default function DashboardPage() {
                     className={`min-h-[44px] rounded-md px-2.5 py-1.5 text-[13px] font-medium ${filter === "Unread" ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:bg-slate-50"}`}
                   >
                     Unread{" "}
-                    <span className="ml-1 text-xs text-slate-400">12</span>
+                    <span className="ml-1 text-xs text-slate-400">
+                      {messages.filter((m) => !m.archived && m.unread).length}
+                    </span>
                   </button>
                   <button
                     onClick={() =>
