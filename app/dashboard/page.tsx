@@ -317,9 +317,9 @@ export default function DashboardPage() {
             <button
               aria-label="Open navigation"
               onClick={() => setMobileNav(true)}
-              className="rounded-md p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
+              className="grid size-9 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 lg:hidden"
             >
-              <Menu className="size-[18px]" />
+              <Menu className="size-4" />
             </button>
             <div className="relative flex min-w-0 flex-1 items-center sm:max-w-[440px]">
               <Search className="pointer-events-none absolute left-3.5 size-4 text-slate-400" />
