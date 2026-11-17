@@ -623,27 +623,7 @@ export default function DashboardPage() {
                       </Link>
                       <MoreHorizontal className="hidden size-4 text-slate-300 group-hover:block md:hidden" />
                     </div>
-                    {selectedId === message.id && (
-                      <div className="rounded-lg border border-indigo-100 bg-indigo-50/60 p-3 text-[13px] text-slate-600 md:col-span-5 md:ml-0">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-indigo-700">
-                            Message preview
-                          </span>
-                          <Link
-                            href={`/conversation/${message.id}`}
-                            onClick={(event) => event.stopPropagation()}
-                            className="inline-flex items-center gap-1 rounded-md bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-indigo-700"
-                          >
-                            Open conversation{" "}
-                            <ArrowUpRight className="size-3" />
-                          </Link>
-                        </div>
-                        <p className="mt-1 leading-relaxed">
-                          {message.summary} Open the original email to view the
-                          full conversation and reply.
-                        </p>
-                      </div>
-                    )}
+                    {/* Removed inline message preview box on row click */}
                   </div>
                 ))}
               </div>
