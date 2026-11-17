@@ -683,22 +683,23 @@ export default function DashboardPage() {
                   <span className="font-medium text-slate-600">
                     {shownMessages.length ? 1 : 0}–{shownMessages.length}
                   </span>{" "}
-                  of 128 emails
+                  of {messages.filter((m) => !m.archived).length} emails
                 </span>
                 <div className="flex items-center gap-1">
                   <button
                     aria-label="Previous page"
-                    className="grid size-7 place-items-center rounded-md border border-slate-200 bg-white text-slate-400 hover:text-slate-700"
+                    disabled
+                    className="grid size-7 place-items-center rounded-md border border-slate-200 bg-white text-slate-300"
                   >
                     <ChevronLeft className="size-3.5" />
                   </button>
                   <span className="px-2 text-xs text-slate-500">
-                    Page <span className="font-semibold text-slate-700">1</span>{" "}
-                    of 11
+                    Page <span className="font-semibold text-slate-700">1</span>
                   </span>
                   <button
                     aria-label="Next page"
-                    className="grid size-7 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 hover:text-slate-800"
+                    disabled
+                    className="grid size-7 place-items-center rounded-md border border-slate-200 bg-white text-slate-300"
                   >
                     <ChevronRight className="size-3.5" />
                   </button>
